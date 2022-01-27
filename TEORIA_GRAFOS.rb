@@ -6,7 +6,9 @@ set resizable: true
 set width: 1920
 set height: 1080 
 
+#set background: '#99B899'
 set background: 'white'
+
 set diagnostics: true
 def make_Squre(_x,_y,_z,_size, _color)
     Square.new(
@@ -59,7 +61,7 @@ class Vertex
     #the y cordinate, then we select the kind of shape we want to use(this shapes need 
     #to be included in the ruby2d libary, or select an specific image to representate the
     #vertex), finaly we select the color of the selected shape(the color need to be included
-    #in ruby2d or use a color in hex expression 'fffff').
+    #in ruby2d or use a color in hex expression '#fffff').
 
 
 
@@ -115,20 +117,22 @@ class Editor
 
     attr_accessor :shape5, :shape6,:shape7, :shape8
 
-    attr_accessor :shape9 , :shape10
+    attr_accessor :shape9 , :shape10,:shape11
 
     attr_accessor :shapeTs, :shapeT,:shapeSs, :shapeS
     
-    attr_accessor :shapeCs, :shapeC,:shapeRs, :shapeR
+    attr_accessor :shapeCs, :shapeC,:shapePs, :shapeP, :shapeHs, :shapeH
     
-    attr_accessor :text1, :text2, :text3
+    attr_accessor :text1, :text2, :text3, :text_box1
 
-    attr_accessor :vertex_button , :edge_button
+    attr_accessor :vertex_button , :edge_button, :name_box1
 
     def initialize
         #edge and vertex buttons variables are used to specify if the button y selected
         @vertex_button = false
         @edge_button = false
+        @name_box1 = false
+
 
         #shapes 1 and 2 are the first square 
         @shape1 = Square.new(
@@ -139,7 +143,7 @@ class Editor
         @shape2 = Square.new(
             x: 1300, y: 10,
             size: 550,
-            color: '#FECEAB',z: 11)
+            color: '#FF847C',z: 11)
         #shapes 3 and 4 are the square that contains the visualitation of the vertex or the edge
         @shape3 = Square.new(
             x: 1310, y: 15,
@@ -157,7 +161,7 @@ class Editor
             x2: 1690, y2: 15,
             x3: 1690, y3: 60,
             x4: 1590, y4: 60,
-            color: '#547980',
+            color: '#99B899',
             z: 20)
         
         @shape6 = Quad.new(
@@ -182,7 +186,7 @@ class Editor
             x2: 1820, y2: 15,
             x3: 1820, y3: 60,
             x4: 1720, y4: 60,
-            color: '#547980',
+            color: '#99B899',
             z: 20)
         
         @shape8 = Quad.new(
@@ -209,8 +213,16 @@ class Editor
             x4: 1590, y4: 130,
             color: 'white',
             z: 19)
-
+        
         @shape10 = Quad.new(
+            x1: 1590, y1: 90,
+            x2: 1840, y2: 90,
+            x3: 1840, y3: 140,
+            x4: 1590, y4: 140,
+            color: '#2A363B',
+            z: 18)
+        
+        @shape11 = Quad.new(
             x1: 1600, y1: 75,
             x2: 1700, y2: 75,
             x3: 1710, y3: 90,
@@ -224,16 +236,32 @@ class Editor
             size: 13,
             color: 'black',
             z: 100)
-
-        @shapeSs = make_Squre(1600,140,100, 35, '#355C7D')
-        @shapeS = make_Squre(1610, 150,101, 15, 'white')
-
-        @shapeCs = make_Squre(1640,140,100, 35, '#355C7D')
-        @shapeC = make_Circle(1657, 155,101, 12,32, 'white')
-
-
+        #shpaes to select wich we want to use to represent the vertex 
+        #squre
+        @shapeSs = make_Squre(1600,150,100, 35, '#355C7D')
+        @shapeS = make_Squre(1610, 160,101, 15, 'white')
+        #circle
+        @shapeCs = make_Squre(1640,150,100, 35, '#355C7D')
+        @shapeC = make_Circle(1657, 165,101, 12,32, 'white')
+        #triangle
+        @shapeTs = make_Squre(1680,150,100, 35, '#355C7D')
+        @shapeT = make_Circle(1696, 165,101, 12,3, 'white')
+        #pentagon
+        @shapeTs = make_Squre(1720,150,100, 35, '#355C7D')
+        @shapeT = make_Circle(1736, 165,101, 12,5, 'white')
+        #hexagon 
+        @shapeTs = make_Squre(1760,150,100, 35, '#355C7D')
+        @shapeT = make_Circle(1776, 165,101, 12,6, 'white')
+        
+        @text_box1 = Text.new(
+            '',
+            x: 1600, y: 90,
+            font: 'Amatic-Bold.ttf',
+            style: 'bold',
+            size: 35,
+            color: 'black',
+            z: 100)
     end
-
 
 
     def is_in_button_vertex(x,y)
@@ -252,40 +280,51 @@ class Editor
         end
     end
 
+    def is_in_textbox1(x,y)
+        if self.shape9.contains? x,y then
+            true 
+        else
+            false
+        end
+    end
 
     def press_button_vertex
         @shape6.opacity = 0
-        @shape5.color = '#99B898'
+        @shape5.color = '#7CF7FF'
         @vertex_button = true
         if @edge_button == true then
             @edge_button = false
             @shape8.opacity = 1.0
-            @shape7.color = '#547980'
+            @shape7.color = '#99B899'
         end
 
     end 
 
     def unpress_button_vertex
         @shape6.opacity = 1.0
-        @shape5.color = '#547980'
+        @shape5.color = '#99B899'
         @vertex_button = false
     end
 
     def press_button_edge
         @shape8.opacity  = 0
-        @shape7.color = '#99B898'
+        @shape7.color = '#7CF7FF'
         @edge_button = true
         if @vertex_button == true then
             @vertex_button =  false
             @shape6.opacity = 1.0
-            @shape5.color = '#547980'
+            @shape5.color = '#99B899'
         end
     end 
 
     def unpress_button_edge
         @shape8.opacity = 1.0
-        @shape7.color = '#547980'
+        @shape7.color = '#99B899'
         @edge_button = false 
+    end
+
+    def vertex_name_selected
+        @name_box1 = true
     end
 
 end
@@ -314,12 +353,29 @@ on :mouse do |event|
         if edit.is_in_button_edge(event.x, event.y) then 
             edit.press_button_edge
         end
+
+        if edit.is_in_textbox1(event.x,event.y) then 
+            edit.vertex_name_selected
+        end
     when :middle
-      # Middle mouse button pressed down
+    # Middle mouse button pressed down
     when :right
     
         system("explorer #{"/home/sergioska8/"}")
     end
 end
+
+
+on :key_down do |event|
+    if event.key != 'backspace' 
+        x = event.key 
+        edit.text_box1.text += x.to_s
+    elsif event.key == 'backspace'
+        edit.text_box1.text = edit.text_box1.text.chop
+    elsif event.key == 'SPACE' or event.key == ' '
+        edit.text_box1.text += '_'
+    end
+end
+
 
 show
