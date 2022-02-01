@@ -127,7 +127,12 @@ class Editor
 
     attr_accessor :vertex_button , :edge_button, :name_box1, :shapeofvertex
 
-    attr_accessor :shapeIneditor
+    attr_accessor :shapeIneditor, :textInshape, :colorShape
+
+    attr_accessor :color_red, :color_navy, :color_blue, :color_aqua, :color_teal, :color_gray
+    attr_accessor :color_olive, :color_green, :color_lime, :color_yellow, :color_orange
+    attr_accessor :color_brown, :color_fuchsia, :color_purple, :color_maroon, :color_silver
+    
 
     def initialize
         #Variables to interact with the GUI 
@@ -137,6 +142,7 @@ class Editor
         @name_box1 = false
         #1 is square , 2 is trinagle , 3 is circle, 4 is pentagon , 5 is hexagon, 0 is no shape selected  
         @shapeofvertex = 0
+        @colorShape = 'random'
 
         #All of this shapes are just to represent the editor 
         #shapes 1 and 2 are the first square 
@@ -257,7 +263,7 @@ class Editor
         #hexagon 
         @shapeHs = make_Squre(1760,150,100, 35, '#355C7D')
         @shapeH = make_Circle(1776, 165,101, 12,6, 'white')
-        
+        #text to name the vertex
         @text_box1 = Text.new(
             '',
             x: 1600, y: 90,
@@ -268,7 +274,34 @@ class Editor
             z: 100)
         
         #this shape is to represent the vertex on editor
-        @shapeIneditor = nil 
+        @shapeIneditor = nil
+        @textInshape = Text.new(
+            '',
+            x: 1400, y: 130,
+            font: 'Amatic-Bold.ttf',
+            style: 'bold',
+            size: 35,
+            color: 'black',
+            z: 1001)
+
+        #this shapes are for select colors 
+        @color_aqua = make_Squre(1600,195,100, 20, 'aqua')
+        @color_blue = make_Squre(1625,195,100, 20, 'blue')
+        @color_brown = make_Squre(1650,195,100, 20, 'brown')
+        @color_fuchsia = make_Squre(1675,195,100, 20, 'fuchsia')
+        @color_gray = make_Squre(1700,195,100, 20, 'gray')
+        @color_green = make_Squre(1725,195,100, 20, 'green')
+        @color_lime = make_Squre(1750,195,100, 20, 'lime')
+        @color_maroon = make_Squre(1775,195,100, 20, 'maroon')
+        @color_navy = make_Squre(1800,195,100, 20, 'navy')
+
+        @color_olive = make_Squre(1600,220,100, 20, 'olive')
+        @color_orange = make_Squre(1625,220,100, 20, 'orange')
+        @color_purple = make_Squre(1650,220,100, 20, 'purple')
+        @color_red = make_Squre(1675,220,100, 20, 'red')
+        @color_silver = make_Squre(1700,220,100, 20, 'silver')
+        @color_teal = make_Squre(1725,220,100, 20, 'teal')
+        @color_yellow = make_Squre(1750,220,100, 20, 'yellow')
     end
 
 
@@ -344,6 +377,58 @@ class Editor
     end
 
 
+    def is_in_colors(x,y)
+        if @color_aqua.contains? x,y
+            @colorShape = 'aqua'
+            true
+        elsif @color_blue.contains? x,y
+            @colorShape = 'blue'
+            true
+        elsif @color_brown.contains? x,y
+            @colorShape = 'brown'
+            true
+        elsif @color_fuchsia.contains? x,y
+            @colorShape = 'fuchsia'
+            true
+        elsif @color_gray.contains? x,y
+            @colorShape = 'gray'
+            true
+        elsif @color_green.contains? x,y
+            @colorShape = 'green'
+            true
+        elsif @color_lime.contains? x,y
+            @colorShape = 'lime'
+            true
+        elsif @color_maroon.contains? x,y
+            @colorShape ='maroon'
+            true
+        elsif @color_navy.contains? x,y
+            @colorShape = 'navy'
+            true
+        elsif @color_olive.contains? x,y
+            @colorShape = 'olive'
+            true
+        elsif @color_orange.contains? x,y
+            @colorShape = 'orange'
+            true
+        elsif @color_purple.contains? x,y
+            @colorShape = 'purple'
+            true
+        elsif @color_red.contains? x,y
+            @colorShape = 'red'
+            true
+        elsif @color_silver.contains? x,y
+            @colorShape = 'silver'
+            true
+        elsif @color_teal.contains? x,y
+            @colorShape = 'teal'
+            true
+        elsif @color_yellow.contains? x,y
+            @colorShape = 'yellow'
+            true
+        end
+    end
+
     def press_button_vertex
         @shape6.opacity = 0
         @shape5.color = '#7CF7FF'
@@ -385,24 +470,69 @@ class Editor
 
     def squre_shape_selected
         @shapeofvertex = 1
+        self.shapeS.color = 'yellow'
+        self.shapeT.color = 'white'
+        self.shapeC.color = 'white'
+        self.shapeP.color = 'white'
+        self.shapeH.color = 'white'
+        if @shapeIneditor != nil
+            @shapeIneditor.remove
+        end
+
+        @shapeIneditor = make_Squre(1375,70,1000,125,'random')
     end
 
     def triangle_shape_selected
         @shapeofvertex = 2
+        self.shapeS.color = 'white'
+        self.shapeT.color = 'yellow'
+        self.shapeC.color = 'white'
+        self.shapeP.color = 'white'
+        self.shapeH.color = 'white'
+        if @shapeIneditor != nil
+            @shapeIneditor.remove
+        end
+        @shapeIneditor = make_Circle(1435,140,1000,100,3,'random')
     end
 
     def circle_shape_selected
         @shapeofvertex = 3
+        self.shapeS.color = 'white'
+        self.shapeT.color = 'white'
+        self.shapeC.color = 'yellow'
+        self.shapeP.color = 'white'
+        self.shapeH.color = 'white'
+        if @shapeIneditor != nil
+            @shapeIneditor.remove
+        end
+        @shapeIneditor = make_Circle(1435,140,1000,80,35,'random')
     end
 
     def pentagon_shape_selected
         @shapeofvertex = 4
+        self.shapeS.color = 'white'
+        self.shapeT.color = 'white'
+        self.shapeC.color = 'white'
+        self.shapeP.color = 'yellow'
+        self.shapeH.color = 'white'
+        if @shapeIneditor != nil
+            @shapeIneditor.remove
+        end
+        @shapeIneditor = make_Circle(1435,140,1000,100,5,'random')
     end
 
     def hexagon_shape_selected
         @shapeofvertex = 5
+        self.shapeS.color = 'white'
+        self.shapeT.color = 'white'
+        self.shapeC.color = 'white'
+        self.shapeP.color = 'white'
+        self.shapeH.color = 'yellow'
+        if @shapeIneditor != nil
+            @shapeIneditor.remove
+        end
+        @shapeIneditor = make_Circle(1435,140,1000,100,6,'random')
     end
-
 
 end
 
@@ -434,6 +564,30 @@ on :mouse do |event|
         if edit.is_in_textbox1(event.x,event.y) then 
             edit.vertex_name_selected
         end
+
+        if edit.is_in_shapeSquare(event.x, event.y) then
+            edit.squre_shape_selected
+        end
+        if edit.is_in_shapeTriangle(event.x, event.y) then
+            edit.triangle_shape_selected
+        end
+
+        if edit.is_in_shapeCircle(event.x, event.y) then
+            edit.circle_shape_selected
+        end
+
+        if edit.is_in_shapePentagon(event.x, event.y) then
+            edit.pentagon_shape_selected
+        end
+
+        if edit.is_in_shapeHexagon(event.x, event.y) then
+            edit.hexagon_shape_selected
+        end
+        if edit.is_in_colors(event.x, event.y)
+            if edit.shapeIneditor != nil
+                edit.shapeIneditor.color = edit.colorShape
+            end
+        end
     when :middle
     # Middle mouse button pressed down
     when :right
@@ -447,21 +601,29 @@ end
 
 #this help us to introduce text with the keyboard
 on :key_down do |event|
-    if event.key != 'backspace' and event.key != 'space'
+    if event.key != 'backspace' and event.key != 'space' and event.key != 'return'
         x = event.key 
         if edit.name_box1 then 
             if edit.text_box1.text.length <= 20 then
                 edit.text_box1.text += x.to_s
             end
         end
-    elsif event.key == 'backspace'
+    elsif event.key == 'backspace' and event.key != 'space' and event.key != 'return'
         if edit.name_box1 then
             edit.text_box1.text = edit.text_box1.text.chop
         end
-    elsif event.key == 'SPACE' or event.key == 'space'
+    elsif event.key == 'space' and event.key != 'backspace'and event.key != 'return'
         if edit.name_box1 then 
-            if edit.text_box1.text.lenght <= 20 then
+            if edit.text_box1.text.length <= 15 then
                 edit.text_box1.text += '_'
+            end
+        end
+    elsif event.key == 'return' and event.key != 'space' and event.key != 'backspace'
+        if edit.name_box1 then
+            if edit.text_box1.text.length > 0 then 
+                edit.textInshape.text = edit.text_box1.text
+            else 
+                edit.textInshape.text = 'NULL'
             end
         end
     end
