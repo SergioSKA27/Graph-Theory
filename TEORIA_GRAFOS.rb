@@ -302,6 +302,8 @@ class Editor
         @color_silver = make_Squre(1700,220,100, 20, 'silver')
         @color_teal = make_Squre(1725,220,100, 20, 'teal')
         @color_yellow = make_Squre(1750,220,100, 20, 'yellow')
+
+        self.hide_vertex_Editor
     end
 
 
@@ -345,9 +347,6 @@ class Editor
         end
     end
 
-
-
-
     def is_in_shapeCircle(x,y)
         if self.shapeCs.contains? x,y then 
             true
@@ -355,8 +354,6 @@ class Editor
             false
         end
     end
-
-
 
     def is_in_shapePentagon(x,y)
         if self.shapePs.contains? x,y then 
@@ -366,8 +363,6 @@ class Editor
         end
     end
 
-
-
     def is_in_shapeHexagon(x,y)
         if self.shapeHs.contains? x,y then 
             true
@@ -375,7 +370,6 @@ class Editor
             false
         end
     end
-
 
     def is_in_colors(x,y)
         if @color_aqua.contains? x,y
@@ -438,7 +432,7 @@ class Editor
             @shape8.opacity = 1.0
             @shape7.color = '#99B899'
         end
-
+        self.show_vertex_Editor
     end 
 
     def unpress_button_vertex
@@ -456,6 +450,7 @@ class Editor
             @shape6.opacity = 1.0
             @shape5.color = '#99B899'
         end
+        self.hide_vertex_Editor
     end 
 
     def unpress_button_edge
@@ -479,7 +474,7 @@ class Editor
             @shapeIneditor.remove
         end
 
-        @shapeIneditor = make_Squre(1375,70,1000,125,'random')
+        @shapeIneditor = make_Squre(1375,70,1000,125,self.colorShape)
     end
 
     def triangle_shape_selected
@@ -492,7 +487,7 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.remove
         end
-        @shapeIneditor = make_Circle(1435,140,1000,100,3,'random')
+        @shapeIneditor = make_Circle(1435,140,1000,100,3,self.colorShape)
     end
 
     def circle_shape_selected
@@ -505,7 +500,7 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.remove
         end
-        @shapeIneditor = make_Circle(1435,140,1000,80,35,'random')
+        @shapeIneditor = make_Circle(1435,140,1000,80,35,self.colorShape)
     end
 
     def pentagon_shape_selected
@@ -518,7 +513,7 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.remove
         end
-        @shapeIneditor = make_Circle(1435,140,1000,100,5,'random')
+        @shapeIneditor = make_Circle(1435,140,1000,100,5,self.colorShape)
     end
 
     def hexagon_shape_selected
@@ -531,9 +526,84 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.remove
         end
-        @shapeIneditor = make_Circle(1435,140,1000,100,6,'random')
+        @shapeIneditor = make_Circle(1435,140,1000,100,6,self.colorShape)
     end
 
+    def hide_vertex_Editor
+        @shape9.opacity = 0
+        @shape10.opacity = 0
+        @shape11.opacity = 0
+        @text3.opacity = 0
+        @shapeS.opacity = 0
+        @shapeSs.opacity = 0
+        @shapeT.opacity = 0
+        @shapeTs.opacity = 0
+        @shapeC.opacity = 0
+        @shapeCs.opacity = 0
+        @shapeP.opacity = 0
+        @shapePs.opacity = 0
+        @shapeH.opacity = 0
+        @shapeHs.opacity = 0
+        @text_box1.opacity = 0
+        @color_aqua.opacity = 0
+        @color_blue.opacity = 0
+        @color_brown.opacity = 0
+        @color_fuchsia.opacity = 0
+        @color_gray.opacity = 0
+        @color_green.opacity = 0
+        @color_lime.opacity = 0
+        @color_maroon.opacity = 0
+        @color_navy.opacity = 0
+        @color_olive.opacity = 0
+        @color_orange.opacity = 0
+        @color_purple.opacity = 0
+        @color_red.opacity = 0
+        @color_silver.opacity = 0
+        @color_teal.opacity = 0
+        @color_yellow.opacity = 0
+        @textInshape.opacity = 0
+        if @shapeIneditor != nil
+            @shapeIneditor.opacity = 0
+        end
+    end
+
+    def show_vertex_Editor
+        @shape9.opacity = 1
+        @shape10.opacity = 1
+        @shape11.opacity = 1
+        @text3.opacity = 1
+        @shapeS.opacity = 1
+        @shapeSs.opacity = 1
+        @shapeT.opacity = 1
+        @shapeTs.opacity = 1
+        @shapeC.opacity = 1
+        @shapeCs.opacity = 1
+        @shapeP.opacity = 1
+        @shapePs.opacity = 1
+        @shapeH.opacity = 1
+        @shapeHs.opacity = 1
+        @text_box1.opacity = 1
+        @color_aqua.opacity = 1
+        @color_blue.opacity = 1
+        @color_brown.opacity = 1
+        @color_fuchsia.opacity = 1
+        @color_gray.opacity = 1
+        @color_green.opacity = 1
+        @color_lime.opacity = 1
+        @color_maroon.opacity = 1
+        @color_navy.opacity = 1
+        @color_olive.opacity = 1
+        @color_orange.opacity = 1
+        @color_purple.opacity = 1
+        @color_red.opacity = 1
+        @color_silver.opacity = 1
+        @color_teal.opacity = 1
+        @color_yellow.opacity = 1
+        @textInshape.opacity = 1
+        if @shapeIneditor != nil
+            @shapeIneditor.opacity = 1
+        end
+    end
 end
 
 
