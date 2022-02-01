@@ -120,20 +120,25 @@ class Editor
     attr_accessor :shape9 , :shape10,:shape11
 
     attr_accessor :shapeTs, :shapeT,:shapeSs, :shapeS
-    
+
     attr_accessor :shapeCs, :shapeC,:shapePs, :shapeP, :shapeHs, :shapeH
-    
+
     attr_accessor :text1, :text2, :text3, :text_box1
 
-    attr_accessor :vertex_button , :edge_button, :name_box1
+    attr_accessor :vertex_button , :edge_button, :name_box1, :shapeofvertex
+
+    attr_accessor :shapeIneditor
 
     def initialize
+        #Variables to interact with the GUI 
         #edge and vertex buttons variables are used to specify if the button y selected
         @vertex_button = false
         @edge_button = false
         @name_box1 = false
+        #1 is square , 2 is trinagle , 3 is circle, 4 is pentagon , 5 is hexagon, 0 is no shape selected  
+        @shapeofvertex = 0
 
-
+        #All of this shapes are just to represent the editor 
         #shapes 1 and 2 are the first square 
         @shape1 = Square.new(
             x: 1300, y: 10,
@@ -247,11 +252,11 @@ class Editor
         @shapeTs = make_Squre(1680,150,100, 35, '#355C7D')
         @shapeT = make_Circle(1696, 165,101, 12,3, 'white')
         #pentagon
-        @shapeTs = make_Squre(1720,150,100, 35, '#355C7D')
-        @shapeT = make_Circle(1736, 165,101, 12,5, 'white')
+        @shapePs = make_Squre(1720,150,100, 35, '#355C7D')
+        @shapeP = make_Circle(1736, 165,101, 12,5, 'white')
         #hexagon 
-        @shapeTs = make_Squre(1760,150,100, 35, '#355C7D')
-        @shapeT = make_Circle(1776, 165,101, 12,6, 'white')
+        @shapeHs = make_Squre(1760,150,100, 35, '#355C7D')
+        @shapeH = make_Circle(1776, 165,101, 12,6, 'white')
         
         @text_box1 = Text.new(
             '',
@@ -261,6 +266,9 @@ class Editor
             size: 35,
             color: 'black',
             z: 100)
+        
+        #this shape is to represent the vertex on editor
+        @shapeIneditor = nil 
     end
 
 
@@ -287,6 +295,54 @@ class Editor
             false
         end
     end
+
+    def is_in_shapeSquare(x,y)
+        if self.shapeSs.contains? x,y then 
+            true
+        else 
+            false
+        end
+    end
+
+    def is_in_shapeTriangle(x,y)
+        if self.shapeTs.contains? x,y then 
+            true
+        else 
+            false
+        end
+    end
+
+
+
+
+    def is_in_shapeCircle(x,y)
+        if self.shapeCs.contains? x,y then 
+            true
+        else 
+            false
+        end
+    end
+
+
+
+    def is_in_shapePentagon(x,y)
+        if self.shapePs.contains? x,y then 
+            true
+        else 
+            false
+        end
+    end
+
+
+
+    def is_in_shapeHexagon(x,y)
+        if self.shapeHs.contains? x,y then 
+            true
+        else 
+            false
+        end
+    end
+
 
     def press_button_vertex
         @shape6.opacity = 0
@@ -327,6 +383,27 @@ class Editor
         @name_box1 = true
     end
 
+    def squre_shape_selected
+        @shapeofvertex = 1
+    end
+
+    def triangle_shape_selected
+        @shapeofvertex = 2
+    end
+
+    def circle_shape_selected
+        @shapeofvertex = 3
+    end
+
+    def pentagon_shape_selected
+        @shapeofvertex = 4
+    end
+
+    def hexagon_shape_selected
+        @shapeofvertex = 5
+    end
+
+
 end
 
 
@@ -366,14 +443,27 @@ on :mouse do |event|
 end
 
 
+
+
+#this help us to introduce text with the keyboard
 on :key_down do |event|
-    if event.key != 'backspace' 
+    if event.key != 'backspace' and event.key != 'space'
         x = event.key 
-        edit.text_box1.text += x.to_s
+        if edit.name_box1 then 
+            if edit.text_box1.text.length <= 20 then
+                edit.text_box1.text += x.to_s
+            end
+        end
     elsif event.key == 'backspace'
-        edit.text_box1.text = edit.text_box1.text.chop
-    elsif event.key == 'SPACE' or event.key == ' '
-        edit.text_box1.text += '_'
+        if edit.name_box1 then
+            edit.text_box1.text = edit.text_box1.text.chop
+        end
+    elsif event.key == 'SPACE' or event.key == 'space'
+        if edit.name_box1 then 
+            if edit.text_box1.text.lenght <= 20 then
+                edit.text_box1.text += '_'
+            end
+        end
     end
 end
 
