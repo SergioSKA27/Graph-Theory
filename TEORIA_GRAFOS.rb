@@ -1,5 +1,5 @@
 require 'ruby2d'
-
+#Created by: Sergio Lopez
 #:) it's fine 
 set title: 'TEORIA DE GRAFOS'
 set resizable: true 
@@ -53,7 +53,9 @@ end
 class Vertex
     attr_accessor :vertex_name, :vertex_pos #vertex_pos = [x,y]
     attr_accessor :vertex_color, :vertex_shape #vertex shape can be any kind of shape
-    attr_accessor :vshape, :nameshape
+    attr_accessor :vshape, :nameshape, :vselected
+    #this help us to save diferent information about the current vertex 
+    attr_accessor :degree , :adj_vertex, :edges_s #edges_S are the edges for simple 
 
 
     #We initialize the object passing the vertex name as a string, the vertex position
@@ -71,34 +73,50 @@ class Vertex
         self.vertex_shape = kshape.to_s
         self.vertex_color = color.to_s
 
-
+        self.degree = 0 #this is the degre of a vertex in a non directed graph 
+        self.adj_vertex = nil #this is a map of adjacent vertex 
+        self.edges_s =  nil #this is a map of edges of non directed graphs 
         
 
         case kshape.downcase
         when 'triangle' then
             #in progress :)
-            @vshape = Triangle.new(
-                x1: vertexpos[0],  y1: vertexpos[1]-((vertexpos[1]/2).to_i),
-                x2: vertexpos[0]+ ((vertexpos[0]/2).to_i),  y2: vertexpos[1]+((vertexpos[1]/2).to_i),
-                x3: vertexpos[1]- ((vertexpos[0]/2).to_i),  y3: vertexpos[1]+((vertexpos[1]/2).to_i),
-                color: self.vertex_color, z: 10)
+            @vshape =  Circle.new(
+                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
+                radius: size.to_i,sectors: 3,
+                color: color.to_s,z: 10)
+            @vselected =  Circle.new(
+                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
+                radius: size.to_i + 5,sectors: 3,
+                color: color.to_s,z: 10)
             
         when 'circle' then
             @vshape = Circle.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 32,
                 color: color.to_s,z: 10)
+            @vselected =  Circle.new(
+                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
+                radius: size.to_i + 5,sectors: 32,
+                color: color.to_s,z: 10)
         when 'square' then
             @vshape= Square.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 size: size.to_i, color: color.to_s,z: 10)
-        when 'rectangle' then
-            @vshape = Rectangle.new(
-                x: vertexpos[0].to_i, y:vertexpos[1].to_i,
-                width: (size*2).to_i, height: size.to_i,
+        when 'pentagon' then
+            @vshape =  Circle.new(
+                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
+                radius: size.to_i,sectors: 5,
                 color: color.to_s,z: 10)
-        when 'quad' then
-            nil
+            @vselected =  Circle.new(
+                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
+                radius: size.to_i + 5,sectors: 5,
+                color: color.to_s,z: 10)
+        when 'hexagon' then
+            @vshape =  Circle.new(
+                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
+                radius: size.to_i,sectors: 5,
+                color: color.to_s,z: 10)
         else
             #Selecciona  una imagen
         end
@@ -106,10 +124,18 @@ class Vertex
 end
 
 
+class Graph_ND
+    attr_accessor :vertex, :lines
+    def initialize
+        
+    end
+end
+
+
 #this class help us to create a vertex or edit any of this 
 #and at the same way this can help us to conect any pair of 
 #vertex this create an edge with an specific identifier and 
-#we can edit this edges at the same form
+#we can edit this edges at the same form :)
 
 
 class Editor
@@ -123,11 +149,11 @@ class Editor
 
     attr_accessor :shapeCs, :shapeC,:shapePs, :shapeP, :shapeHs, :shapeH
 
-    attr_accessor :text1, :text2, :text3, :text_box1
+    attr_accessor :text1, :text2, :text3, :text_box1,:buttonC_text
 
     attr_accessor :vertex_button , :edge_button, :name_box1, :shapeofvertex
 
-    attr_accessor :shapeIneditor, :textInshape, :colorShape
+    attr_accessor :shapeIneditor, :textInshape, :colorShape, :button_create, :createshape
 
     attr_accessor :color_red, :color_navy, :color_blue, :color_aqua, :color_teal, :color_gray
     attr_accessor :color_olive, :color_green, :color_lime, :color_yellow, :color_orange
@@ -143,6 +169,7 @@ class Editor
         #1 is square , 2 is trinagle , 3 is circle, 4 is pentagon , 5 is hexagon, 0 is no shape selected  
         @shapeofvertex = 0
         @colorShape = 'random'
+        @button_create = false
 
         #All of this shapes are just to represent the editor 
         #shapes 1 and 2 are the first square 
@@ -279,7 +306,6 @@ class Editor
             '',
             x: 1400, y: 130,
             font: 'Amatic-Bold.ttf',
-            style: 'bold',
             size: 35,
             color: 'black',
             z: 1001)
@@ -302,6 +328,24 @@ class Editor
         @color_silver = make_Squre(1700,220,100, 20, 'silver')
         @color_teal = make_Squre(1725,220,100, 20, 'teal')
         @color_yellow = make_Squre(1750,220,100, 20, 'yellow')
+
+        @createshape = Image.new(
+            '17.png',
+            x: 1590, y: 240,
+            width: 150, height: 100,
+            color: [1.0, 0.5, 0.2, 1.0],
+            rotate: 0,
+            z: 100)
+
+        @buttonC_text = Text.new(
+            'CREAR',
+            x: 1635, y: 265,
+            font: 'Amatic-Bold.ttf',
+            size: 35,
+            color: 'black',
+            z: 1001, opacity: 0)
+
+
 
         self.hide_vertex_Editor
     end
@@ -420,6 +464,15 @@ class Editor
         elsif @color_yellow.contains? x,y
             @colorShape = 'yellow'
             true
+        end
+    end
+
+
+    def is_in_buttonCreate(x,y)
+        if @createshape.contains? x,y or @buttonC_text.contains? x,y then 
+            true 
+        else
+            false 
         end
     end
 
@@ -565,6 +618,8 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.opacity = 0
         end
+        @createshape.opacity = 0
+        @buttonC_text.remove
     end
 
     def show_vertex_Editor
@@ -603,6 +658,8 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.opacity = 1
         end
+        @createshape.opacity = 1
+        @buttonC_text.add
     end
 end
 
@@ -658,11 +715,26 @@ on :mouse do |event|
                 edit.shapeIneditor.color = edit.colorShape
             end
         end
+
+        if edit.is_in_buttonCreate(event.x,event.y)
+            edit.buttonC_text.color = 'red'
+            sleep 1
+            edit.buttonC_text.color = 'black'
+        end
     when :middle
     # Middle mouse button pressed down
     when :right
     
         system("explorer #{"/home/sergioska8/"}")
+    end
+end
+
+on :mouse_move do |event|
+
+    if edit.is_in_buttonCreate(event.x,event.y)
+        edit.buttonC_text.color = 'blue'
+    else
+        edit.buttonC_text.color = 'black'
     end
 end
 
