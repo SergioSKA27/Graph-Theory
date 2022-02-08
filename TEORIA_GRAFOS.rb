@@ -133,9 +133,11 @@ end
 #this class is for handle non directed graphs :)
 class Graph_ND
     attr_accessor :vertex, :edges
+    attr_accessor :selected_key
     def initialize
         @vertex = Hash.new
         @edges = Hash.new
+        @selected_key = nil
     end
 
     def add_vertex(name, fig, color)
@@ -146,6 +148,14 @@ class Graph_ND
         y = rand(1050)+20
         v = Vertex.new(name,[x,y],fig,color, 50)
         vertex[name] = v
+    end
+
+    def vertex_Select(key)
+        @selected_key = key
+    end
+
+    def vertex_Selected
+        self.vertex[self.selected_key]
     end
 end
 
@@ -712,6 +722,7 @@ g = Graph_ND.new
 
 
 on :mouse do |event|
+    #puts event
     case event.button
     when :left#right button  is used to select any object on the screan
         if edit.is_in_button_vertex(event.x, event.y) then 
@@ -767,11 +778,22 @@ on :mouse do |event|
                 s = 'circle'
             end
             if edit.shapeIneditor != nil and edit.textInshape != '' and edit.text_box1 != '' then 
-                if g.add_vertex((edit.textInshape.text).clone,s,edit.colorShape.clone) != nil
-                    edit.reset_vertexEditor
+                x = g.add_vertex((edit.textInshape.text),s,edit.colorShape)
+                if  x != nil
+                    #edit.reset_vertexEditor
                 end
             end
             
+        end
+
+        g.vertex.each do |k,s|
+            if s.vshape.contains? event.x ,event.y
+                if g.selected_key == k
+                    g.selected_key = nil
+                else
+                    g.vertex_Select(k)
+                end
+            end
         end
     when :middle
     # Middle mouse button pressed down
@@ -781,7 +803,17 @@ on :mouse do |event|
     end
 end
 
+
 on :mouse_move do |event|
+
+    if g.selected_key != nil
+        g.vertex[g.selected_key].vshape.x = event.x
+        g.vertex[g.selected_key].vshape.y = event.y
+        g.vertex[g.selected_key].vselected.x = event.x
+        g.vertex[g.selected_key].vselected.y = event.y
+        g.vertex[g.selected_key].nameshape.x = event.x
+        g.vertex[g.selected_key].nameshape.y = event.y
+    end
     if edit.is_in_buttonCreate(event.x,event.y)
         edit.buttonC_text.color = 'blue'
     else
