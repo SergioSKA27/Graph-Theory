@@ -120,14 +120,32 @@ class Vertex
         else
             #Selecciona  una imagen
         end
+        @nameshape = Text.new(
+            self.vertex_name.to_s,
+            x: vertex_pos[0], y: vertex_pos[1],
+            font: 'Amatic-Bold.ttf',
+            size: 35,
+            color: 'black',
+            z: 1001)
     end
 end
 
-
+#this class is for handle non directed graphs :)
 class Graph_ND
-    attr_accessor :vertex, :lines
+    attr_accessor :vertex, :edges
     def initialize
-        
+        @vertex = Hash.new
+        @edges = Hash.new
+    end
+
+    def add_vertex(name, fig, color)
+        if vertex.include?(name) then 
+            return nil 
+        end
+        x = rand(1280)+10
+        y = rand(1050)+20
+        v = Vertex.new(name,[x,y],fig,color, 50)
+        vertex[name] = v
     end
 end
 
@@ -661,6 +679,20 @@ class Editor
         @createshape.opacity = 1
         @buttonC_text.add
     end
+
+
+    def reset_vertexEditor
+        self.shapeofvertex = 0
+        self.colorShape = 'random'
+        self.textInshape.remove
+        self.shapeIneditor.remove
+        self.text_box1.text = ''
+        self.shapeS.color = 'white'
+        self.shapeT.color = 'white'
+        self.shapeC.color = 'white'
+        self.shapeP.color = 'white'
+        self.shapeH.color = 'white'
+    end
 end
 
 
@@ -674,6 +706,8 @@ po = Square.new(
     color: 'red',
     z: 100
 )
+
+g = Graph_ND.new
 
 
 
@@ -717,9 +751,27 @@ on :mouse do |event|
         end
 
         if edit.is_in_buttonCreate(event.x,event.y)
-            edit.buttonC_text.color = 'red'
-            sleep 1
-            edit.buttonC_text.color = 'black'
+            s = ''
+            case edit.shapeofvertex
+            when 1 
+                s = 'square'
+            when 2
+                s = 'triangle'
+            when 3
+                s = 'circle'
+            when 4
+                s = 'pentagon'
+            when 5
+                s = 'hexagon'
+            else
+                s = 'circle'
+            end
+            if edit.shapeIneditor != nil and edit.textInshape != '' and edit.text_box1 != '' then 
+                if g.add_vertex((edit.textInshape.text).clone,s,edit.colorShape.clone) != nil
+                    edit.reset_vertexEditor
+                end
+            end
+            
         end
     when :middle
     # Middle mouse button pressed down
@@ -730,7 +782,6 @@ on :mouse do |event|
 end
 
 on :mouse_move do |event|
-
     if edit.is_in_buttonCreate(event.x,event.y)
         edit.buttonC_text.color = 'blue'
     else
@@ -763,6 +814,7 @@ on :key_down do |event|
     elsif event.key == 'return' and event.key != 'space' and event.key != 'backspace'
         if edit.name_box1 then
             if edit.text_box1.text.length > 0 then 
+                edit.textInshape.add
                 edit.textInshape.text = edit.text_box1.text
             else 
                 edit.textInshape.text = 'NULL'
