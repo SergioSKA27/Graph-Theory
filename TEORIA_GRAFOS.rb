@@ -3,7 +3,7 @@ require 'ruby2d'
 #:) it's fine 
 set title: 'TEORIA DE GRAFOS'
 set resizable: true 
-set width: 1920
+set width: 1900
 set height: 1080 
 
 #set background: '#99B899'
@@ -85,20 +85,13 @@ class Vertex
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 3,
                 color: color.to_s,z: 10)
-            @vselected =  Circle.new(
-                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
-                radius: size.to_i + 5,sectors: 3,
-                color: color.to_s,z: 10)
             
         when 'circle' then
             @vshape = Circle.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 32,
                 color: color.to_s,z: 10)
-            @vselected =  Circle.new(
-                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
-                radius: size.to_i + 5,sectors: 32,
-                color: color.to_s,z: 10)
+            
         when 'square' then
             @vshape= Square.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
@@ -108,10 +101,7 @@ class Vertex
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 5,
                 color: color.to_s,z: 10)
-            @vselected =  Circle.new(
-                x: vertexpos[0].to_i, y: vertexpos[1].to_i,
-                radius: size.to_i + 5,sectors: 5,
-                color: color.to_s,z: 10)
+            
         when 'hexagon' then
             @vshape =  Circle.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
@@ -129,6 +119,19 @@ class Vertex
             z: 1001)
     end
 end
+#This class help us to create an edge to connect a pair of vertex
+#This edge need a name to diferentiate from other edges, and the 
+#two vertex you are connecting, this edge is non directed
+class Edge_ND
+    attr_accessor :name, :terminalV1, :terminalV2
+    attr_accessor :shape
+    def initialize(_terminalV1, _terminalV2, _name, color, width)
+        
+
+        
+    end
+end
+
 
 #this class is for handle non directed graphs :)
 class Graph_ND
@@ -505,37 +508,37 @@ class Editor
     end
 
     def press_button_vertex
-        @shape6.opacity = 0
+        @shape6.remove
         @shape5.color = '#7CF7FF'
         @vertex_button = true
         if @edge_button == true then
             @edge_button = false
-            @shape8.opacity = 1.0
+            @shape8.add
             @shape7.color = '#99B899'
         end
         self.show_vertex_Editor
     end 
 
     def unpress_button_vertex
-        @shape6.opacity = 1.0
+        @shape6.remove
         @shape5.color = '#99B899'
         @vertex_button = false
     end
 
     def press_button_edge
-        @shape8.opacity  = 0
+        @shape8.remove
         @shape7.color = '#7CF7FF'
         @edge_button = true
         if @vertex_button == true then
             @vertex_button =  false
-            @shape6.opacity = 1.0
+            @shape6.add
             @shape5.color = '#99B899'
         end
         self.hide_vertex_Editor
     end 
 
     def unpress_button_edge
-        @shape8.opacity = 1.0
+        @shape8.remove
         @shape7.color = '#99B899'
         @edge_button = false 
     end
@@ -611,82 +614,82 @@ class Editor
     end
 
     def hide_vertex_Editor
-        @shape9.opacity = 0
-        @shape10.opacity = 0
-        @shape11.opacity = 0
-        @text3.opacity = 0
-        @shapeS.opacity = 0
-        @shapeSs.opacity = 0
-        @shapeT.opacity = 0
-        @shapeTs.opacity = 0
-        @shapeC.opacity = 0
-        @shapeCs.opacity = 0
-        @shapeP.opacity = 0
-        @shapePs.opacity = 0
-        @shapeH.opacity = 0
-        @shapeHs.opacity = 0
-        @text_box1.opacity = 0
-        @color_aqua.opacity = 0
-        @color_blue.opacity = 0
-        @color_brown.opacity = 0
-        @color_fuchsia.opacity = 0
-        @color_gray.opacity = 0
-        @color_green.opacity = 0
-        @color_lime.opacity = 0
-        @color_maroon.opacity = 0
-        @color_navy.opacity = 0
-        @color_olive.opacity = 0
-        @color_orange.opacity = 0
-        @color_purple.opacity = 0
-        @color_red.opacity = 0
-        @color_silver.opacity = 0
-        @color_teal.opacity = 0
-        @color_yellow.opacity = 0
-        @textInshape.opacity = 0
+        @shape9.remove
+        @shape10.remove
+        @shape11.remove
+        @text3.remove
+        @shapeS.remove
+        @shapeSs.remove
+        @shapeT.remove
+        @shapeTs.remove
+        @shapeC.remove
+        @shapeCs.remove
+        @shapeP.remove
+        @shapePs.remove
+        @shapeH.remove
+        @shapeHs.remove
+        @text_box1.remove
+        @color_aqua.remove
+        @color_blue.remove
+        @color_brown.remove
+        @color_fuchsia.remove
+        @color_gray.remove
+        @color_green.remove
+        @color_lime.remove
+        @color_maroon.remove
+        @color_navy.remove
+        @color_olive.remove
+        @color_orange.remove
+        @color_purple.remove
+        @color_red.remove
+        @color_silver.remove
+        @color_teal.remove
+        @color_yellow.remove
+        @textInshape.remove
         if @shapeIneditor != nil
-            @shapeIneditor.opacity = 0
+            @shapeIneditor.remove
         end
-        @createshape.opacity = 0
+        @createshape.remove
         @buttonC_text.remove
     end
 
     def show_vertex_Editor
-        @shape9.opacity = 1
-        @shape10.opacity = 1
-        @shape11.opacity = 1
-        @text3.opacity = 1
-        @shapeS.opacity = 1
-        @shapeSs.opacity = 1
-        @shapeT.opacity = 1
-        @shapeTs.opacity = 1
-        @shapeC.opacity = 1
-        @shapeCs.opacity = 1
-        @shapeP.opacity = 1
-        @shapePs.opacity = 1
-        @shapeH.opacity = 1
-        @shapeHs.opacity = 1
-        @text_box1.opacity = 1
-        @color_aqua.opacity = 1
-        @color_blue.opacity = 1
-        @color_brown.opacity = 1
-        @color_fuchsia.opacity = 1
-        @color_gray.opacity = 1
-        @color_green.opacity = 1
-        @color_lime.opacity = 1
-        @color_maroon.opacity = 1
-        @color_navy.opacity = 1
-        @color_olive.opacity = 1
-        @color_orange.opacity = 1
-        @color_purple.opacity = 1
-        @color_red.opacity = 1
-        @color_silver.opacity = 1
-        @color_teal.opacity = 1
-        @color_yellow.opacity = 1
-        @textInshape.opacity = 1
+        @shape9.add
+        @shape10.add
+        @shape11.add
+        @text3.add
+        @shapeS.add
+        @shapeSs.add
+        @shapeT.add
+        @shapeTs.add
+        @shapeC.add
+        @shapeCs.add
+        @shapeP.add
+        @shapePs.add
+        @shapeH.add
+        @shapeHs.add
+        @text_box1.add
+        @color_aqua.add
+        @color_blue.add
+        @color_brown.add
+        @color_fuchsia.add
+        @color_gray.add
+        @color_green.add
+        @color_lime.add
+        @color_maroon.add
+        @color_navy.add
+        @color_olive.add
+        @color_orange.add
+        @color_purple.add
+        @color_red.add
+        @color_silver.add
+        @color_teal.add
+        @color_yellow.add
+        @textInshape.add
         if @shapeIneditor != nil
-            @shapeIneditor.opacity = 1
+            @shapeIneditor.add
         end
-        @createshape.opacity = 1
+        @createshape.add
         @buttonC_text.add
     end
 
@@ -724,7 +727,7 @@ g = Graph_ND.new
 on :mouse do |event|
     #puts event
     case event.button
-    when :left#right button  is used to select any object on the screan
+    when :left#right button  is used to select any object on the screen
         if edit.is_in_button_vertex(event.x, event.y) then 
             edit.press_button_vertex
         end
@@ -777,10 +780,19 @@ on :mouse do |event|
             else
                 s = 'circle'
             end
-            if edit.shapeIneditor != nil and edit.textInshape != '' and edit.text_box1 != '' then 
-                x = g.add_vertex((edit.textInshape.text),s,edit.colorShape)
+            if edit.shapeIneditor != nil  then 
+                if edit.textInshape.text.length > 0
+                    x = g.add_vertex((edit.textInshape.text),s,edit.colorShape)
+                elsif edit.text_box1.text.length > 0 
+                    x = g.add_vertex((edit.text_box1.text),s,edit.colorShape)
+                else 
+                    
+                    x = g.add_vertex('NULL0',s,edit.colorShape)
+                
+                end
+                
                 if  x != nil
-                    #edit.reset_vertexEditor
+                    edit.reset_vertexEditor
                 end
             end
             
@@ -795,11 +807,19 @@ on :mouse do |event|
                 end
             end
         end
+
+        
     when :middle
     # Middle mouse button pressed down
     when :right
-    
-        system("explorer #{"/home/sergioska8/"}")
+        if g.selected_key != nil
+            g.vertex[g.selected_key].vshape.x = event.x
+            g.vertex[g.selected_key].vshape.y = event.y
+            g.vertex[g.selected_key].nameshape.x = event.x
+            g.vertex[g.selected_key].nameshape.y = event.y
+            g.selected_key = nil
+        end
+        #system("explorer #{"/home/sergioska8/"}")
     end
 end
 
@@ -809,8 +829,6 @@ on :mouse_move do |event|
     if g.selected_key != nil
         g.vertex[g.selected_key].vshape.x = event.x
         g.vertex[g.selected_key].vshape.y = event.y
-        g.vertex[g.selected_key].vselected.x = event.x
-        g.vertex[g.selected_key].vselected.y = event.y
         g.vertex[g.selected_key].nameshape.x = event.x
         g.vertex[g.selected_key].nameshape.y = event.y
     end
@@ -820,9 +838,6 @@ on :mouse_move do |event|
         edit.buttonC_text.color = 'black'
     end
 end
-
-
-
 
 #this help us to introduce text with the keyboard
 on :key_down do |event|
