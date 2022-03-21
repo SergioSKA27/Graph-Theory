@@ -1,5 +1,7 @@
 require 'ruby2d'
 #Created by: Sergio Lopez
+#This program was make to represent topics of graph theory
+#I used the Ruby2d gem 'https://www.ruby2d.com/'
 #:) it's fine 
 set title: 'TEORIA DE GRAFOS'
 set resizable: true 
@@ -189,6 +191,11 @@ class Editor
     attr_accessor :color_red, :color_navy, :color_blue, :color_aqua, :color_teal, :color_gray
     attr_accessor :color_olive, :color_green, :color_lime, :color_yellow, :color_orange
     attr_accessor :color_brown, :color_fuchsia, :color_purple, :color_maroon, :color_silver
+
+    #this shapes are used in the edge editor
+    attr_accessor :shapeE1,:shapeE2,:shapeE3,:shapeE4,:shapeE5,:shapeE6,:shapeE7
+    attr_accessor :textE1, :textE2,:textE3,:textE4,:textE5 
+    attr_accessor :typeEdge
     
 
     def initialize
@@ -379,6 +386,62 @@ class Editor
 
 
         self.hide_vertex_Editor
+        #this part is for the edege editor
+
+        @typeEdge = nil #this variable store the type of edge we want to use
+        
+         #button to create a directed edge
+         @shapeE1 = Quad.new(
+            x1: 1590, y1: 90,
+            x2: 1690, y2: 90,
+            x3: 1690, y3: 135,
+            x4: 1590, y4: 135,
+            color: '#56BBF1',
+            z: 20)
+        
+        @shapeE2 = Quad.new(
+            x1: 1590, y1: 90,
+            x2: 1700, y2: 90,
+            x3: 1700, y3: 140,
+            x4: 1590, y4: 140,
+            color: '#2A363B',
+            z: 19)
+
+        @textE1 = Text.new(
+            'Dirigida',
+            x: 1600, y: 105,
+            style: 'bold',
+            size: 20,
+            color: 'black',
+            z: 100)
+
+        #button to create a non directed edge 
+        @shapeE3 = Quad.new(
+            x1: 1720, y1: 90,
+            x2: 1820, y2: 90,
+            x3: 1820, y3: 135,
+            x4: 1720, y4: 135,
+            color: '#56BBF1',
+            z: 20)
+        
+        @shapeE4 = Quad.new(
+            x1: 1720, y1: 90,
+            x2: 1830, y2: 90,
+            x3: 1830, y3: 140,
+            x4: 1720, y4: 140,
+            color: '#2A363B',
+            z: 19)
+
+        @textE2 = Text.new(
+            'No dirigida',
+            x: 1730, y: 105,
+            style: 'bold',
+            size: 15,
+            color: 'black',
+            z: 100)
+
+        
+        self.hide_edge_editor
     end
 
 
@@ -507,6 +570,25 @@ class Editor
         end
     end
 
+
+    def is_in_buttonEdgeND(x,y)
+    #this help us to know if the mouse is over the  button to create a non directed edge 
+        if @shapeE3.contains? x,y then
+            true
+        else  
+            false
+        end        
+    end
+
+    def is_in_buttonEdgeD(x,y)
+        #this help us to know if the mouse is over the  button to create a directed edge 
+        if @shapeE1.contains? x,y then
+            true
+        else  
+            false
+        end        
+    end
+
     def press_button_vertex
         @shape6.remove
         @shape5.color = '#7CF7FF'
@@ -516,6 +598,7 @@ class Editor
             @shape8.add
             @shape7.color = '#99B899'
         end
+        self.hide_edge_editor
         self.show_vertex_Editor
     end 
 
@@ -535,12 +618,49 @@ class Editor
             @shape5.color = '#99B899'
         end
         self.hide_vertex_Editor
+        self.show_edge_editor
     end 
 
     def unpress_button_edge
-        @shape8.remove
+        @shape8.add
         @shape7.color = '#99B899'
         @edge_button = false 
+    end
+
+    def press_button_EdgeND 
+        @shapeE4.remove
+        @shapeE3.color = '#90E0EF'
+        if @typeEdge != nil
+            self.unpress_button_EdgeD
+            @typeEdge = 1
+        else  
+            @typeEdge = 1 # 1 is for a non directed edge
+        end
+    end
+
+
+    def unpress_button_EdgeND 
+        @shapeE4.add 
+        @shapeE3.color =  '#56BBF1' 
+        @typeEdge = nil
+    end
+
+
+    def press_button_EdgeD 
+        @shapeE2.remove
+        @shapeE1.color = '#90E0EF'
+        if @typeEdge != nil
+            self.unpress_button_EdgeND
+            @typeEdge = 2
+        else  
+            @typeEdge = 2 # 2 is for a directed edge
+        end
+    end
+
+    def unpress_button_EdgeD 
+        @shapeE2.add 
+        @shapeE1.color =  '#56BBF1' 
+        @typeEdge = nil
     end
 
     def vertex_name_selected
@@ -694,6 +814,25 @@ class Editor
     end
 
 
+    def show_edge_editor
+        @shapeE1.add
+        @shapeE2.add
+        @shapeE3.add
+        @shapeE4.add
+        @textE1.add
+        @textE2.add
+    end
+
+    def hide_edge_editor
+        @shapeE1.remove
+        @shapeE2.remove
+        @shapeE3.remove
+        @shapeE4.remove
+        @textE1.remove 
+        @textE2.remove
+    end
+
+
     def reset_vertexEditor
         self.shapeofvertex = 0
         self.colorShape = 'random'
@@ -762,6 +901,15 @@ on :mouse do |event|
             if edit.shapeIneditor != nil
                 edit.shapeIneditor.color = edit.colorShape
             end
+        end
+
+
+        if edit.is_in_buttonEdgeND(event.x,event.y)
+            edit.press_button_EdgeND
+        end
+
+        if edit.is_in_buttonEdgeD(event.x,event.y)
+            edit.press_button_EdgeD
         end
 
         if edit.is_in_buttonCreate(event.x,event.y)
