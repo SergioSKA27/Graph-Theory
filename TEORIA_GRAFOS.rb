@@ -201,7 +201,7 @@ class Editor
 
     #this shapes are used in the edge editor
     attr_accessor :shapeE1,:shapeE2,:shapeE3,:shapeE4,:shapeE5,:shapeE6,:shapeE7
-    attr_accessor :textE1, :textE2,:textE3,:textE4,:textE5 
+    attr_accessor :textE1, :textE2,:textE3,:textE4,:textE5 ,:typeEdge_shapeaux
     attr_accessor :typeEdge,:typeEdge_shape, :edge_boxE1, :edge_boxE2 ,:text_boxE1, :text_boxE2 
     attr_accessor :txt_boxE1,:txt_boxE2 
     #edge_boxE1 and E2 is for the name of the terminal vertex in a non direcred graph  
@@ -488,6 +488,7 @@ class Editor
             z: 100)
         
         @typeEdge_shape = nil
+        @typeEdge_shapeaux = nil
         
         self.hide_edge_editor
     end
@@ -704,6 +705,10 @@ class Editor
         if @typeEdge_shape != nil 
             @typeEdge_shape.remove
         end
+        if @typeEdge_shapeaux != nil
+            @typeEdge_shapeaux.remove
+            @typeEdge_shapeaux = nil
+        end
         @typeEdge_shape = Line.new(
             x1:1685 , y1: 167,
             x2: 1730, y2: 167,
@@ -734,11 +739,39 @@ class Editor
         else  
             @typeEdge = 2 # 2 is for a directed edge
         end
+
+        if @typeEdge_shape != nil 
+            @typeEdge_shape.remove
+        end
+
+        @typeEdge_shape = Line.new(
+            x1:1685 , y1: 167,
+            x2: 1730, y2: 167,
+            width: 5,
+            color: 'black',
+            z: 20
+          )
+
+        @typeEdge_shapeaux = Circle.new(
+            x: 1725, y: 167,
+            radius: 10,
+            sectors: 3,
+            color: 'black',
+            z: 21
+        )
     end
 
     def unpress_button_EdgeD 
         @shapeE2.add 
         @shapeE1.color =  '#56BBF1' 
+        if @typeEdge_shape != nil 
+            @typeEdge_shape.remove
+        end
+        if @typeEdge_shapeaux != nil
+            @typeEdge_shapeaux.remove
+            @typeEdge_shapeaux = nil
+        end
+        @typeEdge_shape = nil
         @typeEdge = nil
     end
 
@@ -932,6 +965,10 @@ class Editor
         if @typeEdge_shape != nil then 
             @typeEdge_shape.add
         end
+
+        if @typeEdge_shapeaux != nil then 
+            @typeEdge_shape.add
+        end
     end
 
     def hide_edge_editor
@@ -963,6 +1000,10 @@ class Editor
         @color_yellow.remove
 
         if @typeEdge_shape != nil then 
+            @typeEdge_shape.remove
+        end
+
+        if @typeEdge_shapeaux != nil then 
             @typeEdge_shape.remove
         end
     end
