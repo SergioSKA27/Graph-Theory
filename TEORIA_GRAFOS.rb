@@ -128,9 +128,16 @@ class Edge_ND
     attr_accessor :name, :terminalV1, :terminalV2
     attr_accessor :shape
     def initialize(_terminalV1, _terminalV2, _name, color, width)
-        
-
-        
+        @name = _name.to_s
+        @terminalV1 = _terminalV1
+        @terminalV2 = _terminalV2
+        @shape = Line.new(
+            x1: self.terminalV1.vertexpos[0], y1: self.terminalV1.vertexpos[1],
+            x2: self.terminalV2.vertexpos[0], y2: self.terminalV2.vertexpos[1],
+            width: width,
+            color: color.to_s,
+            z: 9
+          )      
     end
 end
 
@@ -168,7 +175,7 @@ end
 #this class help us to create a vertex or edit any of this 
 #and at the same way this can help us to conect any pair of 
 #vertex this create an edge with an specific identifier and 
-#we can edit this edges at the same form :)
+#we can edit this edges at the same form as the vertex :)
 
 
 class Editor
@@ -195,7 +202,11 @@ class Editor
     #this shapes are used in the edge editor
     attr_accessor :shapeE1,:shapeE2,:shapeE3,:shapeE4,:shapeE5,:shapeE6,:shapeE7
     attr_accessor :textE1, :textE2,:textE3,:textE4,:textE5 
-    attr_accessor :typeEdge
+    attr_accessor :typeEdge,:typeEdge_shape, :edge_boxE1, :edge_boxE2 ,:text_boxE1, :text_boxE2 
+    attr_accessor :txt_boxE1,:txt_boxE2 
+    #edge_boxE1 and E2 is for the name of the terminal vertex in a non direcred graph  
+    #in a directed edge the edge_boxE1 is the vertex where does the edge come from and E2  
+    # is where the edge come into the vertex. E1 -> E2
     
 
     def initialize
@@ -204,6 +215,8 @@ class Editor
         @vertex_button = false
         @edge_button = false
         @name_box1 = false
+        @txt_boxE1 = false 
+        @txt_boxE2 = false 
         #1 is square , 2 is trinagle , 3 is circle, 4 is pentagon , 5 is hexagon, 0 is no shape selected  
         @shapeofvertex = 0
         @colorShape = 'random'
@@ -401,8 +414,8 @@ class Editor
         
         @shapeE2 = Quad.new(
             x1: 1590, y1: 90,
-            x2: 1700, y2: 90,
-            x3: 1700, y3: 140,
+            x2: 1695, y2: 90,
+            x3: 1695, y3: 140,
             x4: 1590, y4: 140,
             color: '#2A363B',
             z: 19)
@@ -440,6 +453,41 @@ class Editor
             color: 'black',
             z: 100)
 
+        #text box E1 
+        @edge_boxE1 =  Quad.new(
+            x1: 1600, y1: 150,
+            x2: 1685, y2: 150,
+            x3: 1685, y3: 185,
+            x4: 1600, y4: 185,
+            color: 'white',
+            z: 19)
+        @text_boxE1 =  Text.new(
+            'sfh',
+            x: 1610, y: 155,
+            font: 'Amatic-Bold.ttf',
+            style: 'bold',
+            size: 25,
+            color: 'black',
+            z: 100)
+        #text box E1 
+        @edge_boxE2 =  Quad.new(
+            x1: 1730, y1: 150,
+            x2: 1815, y2: 150,
+            x3: 1815, y3: 185,
+            x4: 1730, y4: 185,
+            color: 'white',
+            z: 19)   
+        
+        @text_boxE2 =  Text.new(
+            'sfh',
+            x: 1740, y: 155,
+            font: 'Amatic-Bold.ttf',
+            style: 'bold',
+            size: 25,
+            color: 'black',
+            z: 100)
+        
+        @typeEdge_shape = nil
         
         self.hide_edge_editor
     end
@@ -589,6 +637,23 @@ class Editor
         end        
     end
 
+
+    def is_in_textboxE1(x,y)
+        if @edge_boxE1.contains? x,y then 
+            true 
+        else
+            false
+        end
+    end
+
+    def is_in_textboxE2(x,y)
+        if @edge_boxE2.contains? x,y then 
+            true 
+        else
+            false
+        end
+    end
+
     def press_button_vertex
         @shape6.remove
         @shape5.color = '#7CF7FF'
@@ -636,12 +701,26 @@ class Editor
         else  
             @typeEdge = 1 # 1 is for a non directed edge
         end
+        if @typeEdge_shape != nil 
+            @typeEdge_shape.remove
+        end
+        @typeEdge_shape = Line.new(
+            x1:1685 , y1: 167,
+            x2: 1730, y2: 167,
+            width: 5,
+            color: 'black',
+            z: 20
+          )
     end
 
 
     def unpress_button_EdgeND 
         @shapeE4.add 
         @shapeE3.color =  '#56BBF1' 
+        if @typeEdge_shape != nil 
+            @typeEdge_shape.remove
+        end
+        @typeEdge_shape = nil
         @typeEdge = nil
     end
 
@@ -665,6 +744,14 @@ class Editor
 
     def vertex_name_selected
         @name_box1 = true
+    end
+
+    def terminalV1_selected
+        @txt_boxE1 = true
+    end
+
+    def terminalV2_selected
+        @txt_boxE2 = true
     end
 
     def squre_shape_selected
@@ -821,6 +908,30 @@ class Editor
         @shapeE4.add
         @textE1.add
         @textE2.add
+        @edge_boxE1.add
+        @edge_boxE2.add
+        @text_boxE1.add
+        @text_boxE2.add
+        @color_aqua.add
+        @color_blue.add
+        @color_brown.add
+        @color_fuchsia.add
+        @color_gray.add
+        @color_green.add
+        @color_lime.add
+        @color_maroon.add
+        @color_navy.add
+        @color_olive.add
+        @color_orange.add
+        @color_purple.add
+        @color_red.add
+        @color_silver.add
+        @color_teal.add
+        @color_yellow.add
+
+        if @typeEdge_shape != nil then 
+            @typeEdge_shape.add
+        end
     end
 
     def hide_edge_editor
@@ -830,6 +941,30 @@ class Editor
         @shapeE4.remove
         @textE1.remove 
         @textE2.remove
+        @edge_boxE1.remove
+        @edge_boxE2.remove
+        @text_boxE1.remove
+        @text_boxE2.remove
+        @color_aqua.remove
+        @color_blue.remove
+        @color_brown.remove
+        @color_fuchsia.remove
+        @color_gray.remove
+        @color_green.remove
+        @color_lime.remove
+        @color_maroon.remove
+        @color_navy.remove
+        @color_olive.remove
+        @color_orange.remove
+        @color_purple.remove
+        @color_red.remove
+        @color_silver.remove
+        @color_teal.remove
+        @color_yellow.remove
+
+        if @typeEdge_shape != nil then 
+            @typeEdge_shape.remove
+        end
     end
 
 
@@ -844,6 +979,7 @@ class Editor
         self.shapeC.color = 'white'
         self.shapeP.color = 'white'
         self.shapeH.color = 'white'
+        self.name_box1 = false
     end
 end
 
@@ -867,7 +1003,7 @@ on :mouse do |event|
     #puts event
     case event.button
     when :left#right button  is used to select any object on the screen
-        if edit.is_in_button_vertex(event.x, event.y) then 
+        if edit.is_in_button_vertex(event.x, event.y)  then 
             edit.press_button_vertex
         end
 
@@ -875,44 +1011,35 @@ on :mouse do |event|
             edit.press_button_edge
         end
 
-        if edit.is_in_textbox1(event.x,event.y) then 
+        if edit.is_in_textbox1(event.x,event.y)  and edit.vertex_button == true then 
             edit.vertex_name_selected
         end
 
-        if edit.is_in_shapeSquare(event.x, event.y) then
+        if edit.is_in_shapeSquare(event.x, event.y) and edit.vertex_button == true then
             edit.squre_shape_selected
         end
-        if edit.is_in_shapeTriangle(event.x, event.y) then
+        if edit.is_in_shapeTriangle(event.x, event.y) and edit.vertex_button == true then
             edit.triangle_shape_selected
         end
 
-        if edit.is_in_shapeCircle(event.x, event.y) then
+        if edit.is_in_shapeCircle(event.x, event.y) and edit.vertex_button == true then
             edit.circle_shape_selected
         end
 
-        if edit.is_in_shapePentagon(event.x, event.y) then
+        if edit.is_in_shapePentagon(event.x, event.y) and edit.vertex_button == true then
             edit.pentagon_shape_selected
         end
 
-        if edit.is_in_shapeHexagon(event.x, event.y) then
+        if edit.is_in_shapeHexagon(event.x, event.y) and edit.vertex_button == true then
             edit.hexagon_shape_selected
         end
-        if edit.is_in_colors(event.x, event.y)
+        if edit.is_in_colors(event.x, event.y) and edit.vertex_button == true
             if edit.shapeIneditor != nil
                 edit.shapeIneditor.color = edit.colorShape
             end
         end
 
-
-        if edit.is_in_buttonEdgeND(event.x,event.y)
-            edit.press_button_EdgeND
-        end
-
-        if edit.is_in_buttonEdgeD(event.x,event.y)
-            edit.press_button_EdgeD
-        end
-
-        if edit.is_in_buttonCreate(event.x,event.y)
+        if edit.is_in_buttonCreate(event.x,event.y) and edit.vertex_button == true
             s = ''
             case edit.shapeofvertex
             when 1 
@@ -946,12 +1073,48 @@ on :mouse do |event|
             
         end
 
-        g.vertex.each do |k,s|
-            if s.vshape.contains? event.x ,event.y
-                if g.selected_key == k
-                    g.selected_key = nil
-                else
-                    g.vertex_Select(k)
+        if edit.is_in_buttonEdgeND(event.x,event.y) and edit.edge_button == true
+            edit.press_button_EdgeND
+        end
+
+        if edit.is_in_buttonEdgeD(event.x,event.y) and edit.edge_button == true
+            edit.press_button_EdgeD
+        end
+
+        if edit.is_in_textboxE1(event.x,event.y) and edit.edge_button == true
+            if edit.txt_boxE2
+                edit.txt_boxE2 = false
+            end
+            edit.terminalV1_selected
+        end
+
+        if edit.is_in_textboxE2(event.x,event.y) and edit.edge_button == true
+            if edit.txt_boxE1
+                edit.txt_boxE1 = false
+            end
+            edit.terminalV2_selected
+        end
+
+        if edit.txt_boxE1 or edit.txt_boxE2 then 
+            g.vertex.each do |k,s|
+                if s.vshape.contains? event.x ,event.y
+                     if edit.txt_boxE1
+                         edit.text_boxE1.text = k.to_s
+                     end
+
+                     if edit.txt_boxE2
+                        edit.text_boxE2.text = k.to_s
+                    end
+                end 
+            end
+        else 
+            g.vertex.each do |k,s|
+                if s.vshape.contains? event.x ,event.y
+                    if g.selected_key == k
+                        g.selected_key = nil
+                    else
+                        g.vertex_Select(k)
+                    end
                 end
             end
         end
@@ -991,14 +1154,34 @@ end
 on :key_down do |event|
     if event.key != 'backspace' and event.key != 'space' and event.key != 'return'
         x = event.key 
-        if edit.name_box1 then 
+        if edit.name_box1 and edit.vertex_button then 
             if edit.text_box1.text.length <= 20 then
                 edit.text_box1.text += x.to_s
             end
         end
+
+        if edit.txt_boxE1 and edit.edge_button then 
+            if edit.text_boxE1.text.length <= 20 then
+                edit.text_boxE1.text += x.to_s
+            end
+        end
+
+        if edit.txt_boxE2 and edit.edge_button then 
+            if edit.text_boxE2.text.length <= 20 then
+                edit.text_boxE2.text += x.to_s
+            end
+        end
     elsif event.key == 'backspace' and event.key != 'space' and event.key != 'return'
-        if edit.name_box1 then
+        if edit.name_box1 and edit.vertex_button then
             edit.text_box1.text = edit.text_box1.text.chop
+        end
+
+        if edit.txt_boxE1 and edit.edge_button then
+            edit.text_boxE1.text = edit.text_boxE1.text.chop
+        end
+
+        if edit.txt_boxE2 and edit.edge_button then
+            edit.text_boxE2.text = edit.text_boxE2.text.chop
         end
     elsif event.key == 'space' and event.key != 'backspace'and event.key != 'return'
         if edit.name_box1 then 
@@ -1006,8 +1189,20 @@ on :key_down do |event|
                 edit.text_box1.text += '_'
             end
         end
+
+        if edit.txt_boxE1 then 
+            if edit.text_boxE1.text.length <= 15 then
+                edit.text_boxE1.text += '_'
+            end
+        end
+
+        if edit.txt_boxE2 then 
+            if edit.text_boxE2.text.length <= 15 then
+                edit.text_boxE2.text += '_'
+            end
+        end
     elsif event.key == 'return' and event.key != 'space' and event.key != 'backspace'
-        if edit.name_box1 then
+        if edit.name_box1 and edit.vertex_button then
             if edit.text_box1.text.length > 0 then 
                 edit.textInshape.add
                 edit.textInshape.text = edit.text_box1.text
