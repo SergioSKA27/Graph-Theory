@@ -1,17 +1,29 @@
 require 'ruby2d'
+require 'ostruct'
 #Created by: Sergio Lopez
 #This program was make to represent topics of graph theory
 #I used the Ruby2d gem 'https://www.ruby2d.com/'
-#:) it's fine 
+#:) it's fine
 set title: 'TEORIA DE GRAFOS'
-set resizable: true 
+set resizable: true
 set width: 1900
-set height: 1080 
+set height: 1080
 
 #set background: '#99B899'
 set background: 'white'
 
 set diagnostics: true
+
+
+##
+# `make_Square` creates a new Square object with the given parameters
+#
+# Args:
+#   _x: The x position of the square
+#   _y: The y position of the square
+#   _z: The z-index of the square.
+#   _size: The size of the square.
+#   _color: The color of the square.
 def make_Squre(_x,_y,_z,_size, _color)
     Square.new(
         x: _x, y: _y,
@@ -21,6 +33,16 @@ def make_Squre(_x,_y,_z,_size, _color)
 end
 
 
+##
+# `make_Circle` creates a new `Circle` object with the given parameters
+#
+# Args:
+#   _x: The x coordinate of the center of the circle.
+#   _y: The y-coordinate of the center of the circle.
+#   _z: The z-index of the circle.
+#   _radius: The radius of the circle.
+#   _sectors: The number of sectors to use to draw the circle.
+#   _color: The color of the circle.
 def make_Circle(_x,_y,_z,_radius, _sectors,_color)
     Circle.new(
         x: _x, y: _y,
@@ -31,6 +53,18 @@ def make_Circle(_x,_y,_z,_radius, _sectors,_color)
 end
 
 
+##
+# `make_Triangle` is a function that takes 6 numbers and a color and returns a Triangle
+#
+# Args:
+#   _x1: The x coordinate of the first point of the triangle.
+#   _y1: The y-coordinate of the first point of the triangle.
+#   _x2: _y2,
+#   _y2: _y2,
+#   _x3: _y3,
+#   _y3: _y3,
+#   _z: The z-index of the triangle.
+#   _color: The color of the triangle.
 def make_Triangle(_x1,_y1,_x2,_y2,_x3,_y3,_z,_color)
     Triangle.new(
         x1: _x1,  y1: _y1,
@@ -41,6 +75,20 @@ def make_Triangle(_x1,_y1,_x2,_y2,_x3,_y3,_z,_color)
     )
 end
 
+##
+# It creates a new Quad object with the given parameters
+#
+# Args:
+#   _x1: The x coordinate of the first point of the quad.
+#   _y1: The y-coordinate of the first point.
+#   _x2: _y2,
+#   _y2: _y2,
+#   _x3: _y3,
+#   _y3: _y3,
+#   _x4: _y4,
+#   _y4: _y4,
+#   _z: The z-index of the quad. Higher z-indexes are drawn on top of lower z-indexes.
+#   _color: The color of the quad.
 def make_Quad(_x1,_y1,_x2,_y2,_x3,_y3,_x4,_y4,_z,_color)
     Quad.new(
         x1: _x1, y1: _y1,
@@ -56,13 +104,13 @@ class Vertex
     attr_accessor :vertex_name, :vertex_pos #vertex_pos = [x,y]
     attr_accessor :vertex_color, :vertex_shape #vertex shape can be any kind of shape
     attr_accessor :vshape, :nameshape, :vselected
-    #this help us to save diferent information about the current vertex 
-    attr_accessor :degree , :adj_vertex, :edges_s #edges_S are the edges for simple 
+    #this help us to save diferent information about the current vertex
+    attr_accessor :degree , :adj_vertex, :edges_s #edges_S are the edges for simple
 
 
     #We initialize the object passing the vertex name as a string, the vertex position
     #is passed as an array where the first position is the x cordinate and the second is
-    #the y cordinate, then we select the kind of shape we want to use(this shapes need 
+    #the y cordinate, then we select the kind of shape we want to use(this shapes need
     #to be included in the ruby2d libary, or select an specific image to representate the
     #vertex), finaly we select the color of the selected shape(the color need to be included
     #in ruby2d or use a color in hex expression '#fffff').
@@ -75,10 +123,10 @@ class Vertex
         self.vertex_shape = kshape.to_s
         self.vertex_color = color.to_s
 
-        self.degree = 0 #this is the degre of a vertex in a non directed graph 
-        self.adj_vertex = nil #this is a map of adjacent vertex 
-        self.edges_s =  nil #this is a map of edges of non directed graphs 
-        
+        self.degree = 0 #this is the degre of a vertex in a non directed graph
+        self.adj_vertex = {} #this is a map of adjacent vertex
+        self.edges_s =  {} #this is a map of edges of non directed graphs
+
 
         case kshape.downcase
         when 'triangle' then
@@ -87,13 +135,13 @@ class Vertex
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 3,
                 color: color.to_s,z: 10)
-            
+
         when 'circle' then
             @vshape = Circle.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 32,
                 color: color.to_s,z: 10)
-            
+
         when 'square' then
             @vshape= Square.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
@@ -103,7 +151,7 @@ class Vertex
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
                 radius: size.to_i,sectors: 5,
                 color: color.to_s,z: 10)
-            
+
         when 'hexagon' then
             @vshape =  Circle.new(
                 x: vertexpos[0].to_i, y: vertexpos[1].to_i,
@@ -120,31 +168,114 @@ class Vertex
             color: 'black',
             z: 1001)
     end
+
+
+    ##
+    # If the object_id of the object being compared to the object_id of the object calling the function, then return true,
+    # otherwise return false
+    #
+    # Args:
+    #   obj: The object to compare with.
+    def ==(obj)
+      if obj.object_id == self.object_id
+        true
+      else
+        false
+      end
+
+    end
+
+
+    ##
+    # It prints the adjacent vertices of the vertex.
+    def print_adjVertx
+      self.adj_vertex.each do |adj|
+        puts(adj)
+      end
+    end
+
+
+    ##
+    # It prints the incident edges of a vertex.
+    def print_incidentEdges
+      self.edges_s.each do |into|
+        puts(into)
+      end
+    end
+
+
+
+    ##
+    # The function takes a string and returns a string
+    def to_s
+      #s = self.vertex_name + '(' + self.object_id.to_s +')'
+    end
+
+
+
+    def add_adjvertex(v)
+      self.adj_vertex[v.object_id] = v.object_id
+    end
+
+    def addincident_edge(e)
+        self.edges_s[e.object_id] = e.object_id
+    end
 end
 #This class help us to create an edge to connect a pair of vertex
-#This edge need a name to diferentiate from other edges, and the 
+#This edge need a name to diferentiate from other edges, and the
 #two vertex you are connecting, this edge is non directed
 class Edge_ND
     attr_accessor :name, :terminalV1, :terminalV2
     attr_accessor :shape
+    ##
+    # The function initializes a new edge object with the given parameters
+    #
+    # Args:
+    #   _terminalV1: The first vertex that the edge is connected to.
+    #   _terminalV2: The vertex that the edge is connected to.
+    #   _name: The name of the edge.
+    #   color: The color of the edge.
+    #   width: width of the line
     def initialize(_terminalV1, _terminalV2, _name, color, width)
         @name = _name.to_s
         @terminalV1 = _terminalV1
         @terminalV2 = _terminalV2
         @shape = Line.new(
-            x1: self.terminalV1.vertexpos[0], y1: self.terminalV1.vertexpos[1],
-            x2: self.terminalV2.vertexpos[0], y2: self.terminalV2.vertexpos[1],
+            x1: self.terminalV1.vshape.x, y1: self.terminalV1.vshape.y,
+            x2: self.terminalV2.vshape.x, y2: self.terminalV2.vshape.y,
             width: width,
             color: color.to_s,
             z: 9
-          )      
+          )
     end
+
+
+
+    def to_s
+      s = '(' + @terminalV1.object_id.to_s + ',' + @terminalV2.object_id.to_s + ')'
+    end
+
+    def ==(obj)
+      if (self.terminalV1 == obj.terminalV1 || self.terminalV1 == obj.terminalV2) &&
+        (self.terminalV2 == obj.terminalV1 || self.terminalV2 == obj.terminalV2) then
+        true
+      else
+        false
+
+      end
+    end
+
+
+
+
+
+
 end
 
 
 #this class is for handle non directed graphs :)
-class Graph_ND
-    attr_accessor :vertex, :edges
+class Graph
+    attr_accessor :vertex, :edges,:typeofgraph
     attr_accessor :selected_key
     def initialize
         @vertex = Hash.new
@@ -152,9 +283,19 @@ class Graph_ND
         @selected_key = nil
     end
 
+    ##
+    # It adds a vertex to the graph.
+    #
+    # Args:
+    #   name: the name of the vertex
+    #   fig: the figure to be drawn
+    #   color: the color of the vertex
+    #
+    # Returns:
+    #   The vertex is being returned.
     def add_vertex(name, fig, color)
-        if vertex.include?(name) then 
-            return nil 
+        if vertex.include?(name) then
+            return nil
         end
         x = rand(1280)+10
         y = rand(1050)+20
@@ -162,19 +303,35 @@ class Graph_ND
         vertex[name] = v
     end
 
+    ##
+    # It selects a vertex.
+    #
+    # Args:
+    #   key: The key of the vertex you want to select.
     def vertex_Select(key)
         @selected_key = key
     end
 
+    ##
+    # It returns the vertex that is currently selected
     def vertex_Selected
         self.vertex[self.selected_key]
+    end
+
+
+    def connect_vertex(v1, v2,color)
+      if not (v1 == v2)
+        ed = Edge_ND.new(v1,v2,'Edge',color,10)
+      else
+        ed = Edge_ND.new(v1,v2,'Edge',color,10)
+      end
     end
 end
 
 
-#this class help us to create a vertex or edit any of this 
-#and at the same way this can help us to conect any pair of 
-#vertex this create an edge with an specific identifier and 
+#this class help us to create a vertex or edit any of this
+#and at the same way this can help us to conect any pair of
+#vertex this create an edge with an specific identifier and
 #we can edit this edges at the same form as the vertex :)
 
 
@@ -202,28 +359,28 @@ class Editor
     #this shapes are used in the edge editor
     attr_accessor :shapeE1,:shapeE2,:shapeE3,:shapeE4,:shapeE5,:shapeE6,:shapeE7
     attr_accessor :textE1, :textE2,:textE3,:textE4,:textE5 ,:typeEdge_shapeaux
-    attr_accessor :typeEdge,:typeEdge_shape, :edge_boxE1, :edge_boxE2 ,:text_boxE1, :text_boxE2 
-    attr_accessor :txt_boxE1,:txt_boxE2 
-    #edge_boxE1 and E2 is for the name of the terminal vertex in a non direcred graph  
-    #in a directed edge the edge_boxE1 is the vertex where does the edge come from and E2  
+    attr_accessor :typeEdge,:typeEdge_shape, :edge_boxE1, :edge_boxE2 ,:text_boxE1, :text_boxE2
+    attr_accessor :txt_boxE1,:txt_boxE2,:txt_conect
+    #edge_boxE1 and E2 is for the name of the terminal vertex in a non direcred graph
+    #in a directed edge the edge_boxE1 is the vertex where does the edge come from and E2
     # is where the edge come into the vertex. E1 -> E2
-    
+
 
     def initialize
-        #Variables to interact with the GUI 
+        #Variables to interact with the GUI
         #edge and vertex buttons variables are used to specify if the button y selected
         @vertex_button = false
         @edge_button = false
         @name_box1 = false
-        @txt_boxE1 = false 
-        @txt_boxE2 = false 
-        #1 is square , 2 is trinagle , 3 is circle, 4 is pentagon , 5 is hexagon, 0 is no shape selected  
+        @txt_boxE1 = false
+        @txt_boxE2 = false
+        #1 is square , 2 is trinagle , 3 is circle, 4 is pentagon , 5 is hexagon, 0 is no shape selected
         @shapeofvertex = 0
         @colorShape = 'random'
         @button_create = false
 
-        #All of this shapes are just to represent the editor 
-        #shapes 1 and 2 are the first square 
+        #All of this shapes are just to represent the editor
+        #shapes 1 and 2 are the first square
         @shape1 = Square.new(
             x: 1300, y: 10,
             size: 580,
@@ -244,7 +401,7 @@ class Editor
             size: 270,
             color: '#2A363B',z: 12)
 
-        #button to create a vertex 
+        #button to create a vertex
         @shape5 = Quad.new(
             x1: 1590, y1: 15,
             x2: 1690, y2: 15,
@@ -252,7 +409,7 @@ class Editor
             x4: 1590, y4: 60,
             color: '#99B899',
             z: 20)
-        
+
         @shape6 = Quad.new(
             x1: 1590, y1: 15,
             x2: 1700, y2: 15,
@@ -269,7 +426,7 @@ class Editor
             color: 'black',
             z: 100)
 
-        #button to create a line
+        #button to create a edge
         @shape7 = Quad.new(
             x1: 1720, y1: 15,
             x2: 1820, y2: 15,
@@ -277,7 +434,7 @@ class Editor
             x4: 1720, y4: 60,
             color: '#99B899',
             z: 20)
-        
+
         @shape8 = Quad.new(
             x1: 1720, y1: 15,
             x2: 1830, y2: 15,
@@ -294,7 +451,7 @@ class Editor
             color: 'black',
             z: 100)
 
-        #shape for name of the vertex 
+        #shape for name of the vertex
         @shape9 = Quad.new(
             x1: 1590, y1: 90,
             x2: 1830, y2: 90,
@@ -302,7 +459,7 @@ class Editor
             x4: 1590, y4: 130,
             color: 'white',
             z: 19)
-        
+
         @shape10 = Quad.new(
             x1: 1590, y1: 90,
             x2: 1840, y2: 90,
@@ -310,7 +467,7 @@ class Editor
             x4: 1590, y4: 140,
             color: '#2A363B',
             z: 18)
-        
+
         @shape11 = Quad.new(
             x1: 1600, y1: 75,
             x2: 1700, y2: 75,
@@ -325,7 +482,7 @@ class Editor
             size: 13,
             color: 'black',
             z: 100)
-        #shpaes to select wich we want to use to represent the vertex 
+        #shpaes to select wich we want to use to represent the vertex
         #squre
         @shapeSs = make_Squre(1600,150,100, 35, '#355C7D')
         @shapeS = make_Squre(1610, 160,101, 15, 'white')
@@ -338,7 +495,7 @@ class Editor
         #pentagon
         @shapePs = make_Squre(1720,150,100, 35, '#355C7D')
         @shapeP = make_Circle(1736, 165,101, 12,5, 'white')
-        #hexagon 
+        #hexagon
         @shapeHs = make_Squre(1760,150,100, 35, '#355C7D')
         @shapeH = make_Circle(1776, 165,101, 12,6, 'white')
         #text to name the vertex
@@ -350,7 +507,7 @@ class Editor
             size: 35,
             color: 'black',
             z: 100)
-        
+
         #this shape is to represent the vertex on editor
         @shapeIneditor = nil
         @textInshape = Text.new(
@@ -361,7 +518,7 @@ class Editor
             color: 'black',
             z: 1001)
 
-        #this shapes are for select colors 
+        #this shapes are for select colors
         @color_aqua = make_Squre(1600,195,100, 20, 'aqua')
         @color_blue = make_Squre(1625,195,100, 20, 'blue')
         @color_brown = make_Squre(1650,195,100, 20, 'brown')
@@ -379,7 +536,7 @@ class Editor
         @color_silver = make_Squre(1700,220,100, 20, 'silver')
         @color_teal = make_Squre(1725,220,100, 20, 'teal')
         @color_yellow = make_Squre(1750,220,100, 20, 'yellow')
-
+#
         @createshape = Image.new(
             '17.png',
             x: 1590, y: 240,
@@ -402,7 +559,7 @@ class Editor
         #this part is for the edege editor
 
         @typeEdge = nil #this variable store the type of edge we want to use
-        
+
          #button to create a directed edge
          @shapeE1 = Quad.new(
             x1: 1590, y1: 90,
@@ -411,7 +568,7 @@ class Editor
             x4: 1590, y4: 135,
             color: '#56BBF1',
             z: 20)
-        
+
         @shapeE2 = Quad.new(
             x1: 1590, y1: 90,
             x2: 1695, y2: 90,
@@ -428,7 +585,7 @@ class Editor
             color: 'black',
             z: 100)
 
-        #button to create a non directed edge 
+        #button to create a non directed edge
         @shapeE3 = Quad.new(
             x1: 1720, y1: 90,
             x2: 1820, y2: 90,
@@ -436,7 +593,7 @@ class Editor
             x4: 1720, y4: 135,
             color: '#56BBF1',
             z: 20)
-        
+
         @shapeE4 = Quad.new(
             x1: 1720, y1: 90,
             x2: 1830, y2: 90,
@@ -453,7 +610,7 @@ class Editor
             color: 'black',
             z: 100)
 
-        #text box E1 
+        #text box E1
         @edge_boxE1 =  Quad.new(
             x1: 1600, y1: 150,
             x2: 1685, y2: 150,
@@ -462,102 +619,177 @@ class Editor
             color: 'white',
             z: 19)
         @text_boxE1 =  Text.new(
-            'sfh',
+            'null',
             x: 1610, y: 155,
             font: 'Amatic-Bold.ttf',
             style: 'bold',
             size: 25,
             color: 'black',
             z: 100)
-        #text box E1 
+        #text box E1
         @edge_boxE2 =  Quad.new(
             x1: 1730, y1: 150,
             x2: 1815, y2: 150,
             x3: 1815, y3: 185,
             x4: 1730, y4: 185,
             color: 'white',
-            z: 19)   
-        
+            z: 19)
+
         @text_boxE2 =  Text.new(
-            'sfh',
+            'null',
             x: 1740, y: 155,
             font: 'Amatic-Bold.ttf',
             style: 'bold',
             size: 25,
             color: 'black',
             z: 100)
-        
-        @typeEdge_shape = nil
-        @typeEdge_shapeaux = nil
-        
+
+        @typeEdge_shape = Line.new(
+            x1:1685 , y1: 167,
+            x2: 1730, y2: 167,
+            width: 5,
+            color: 'black',
+            z: 20
+          )
+
+        @typeEdge_shapeaux = Circle.new(
+            x: 1725, y: 167,
+            radius: 10,
+            sectors: 3,
+            color: 'black',
+            z: 21
+        )
+
+        @txt_conect = Text.new(
+            'CONECTAR',
+            x: 1635, y: 265,
+            font: 'Amatic-Bold.ttf',
+            size: 35,
+            color: 'black',
+            z: 1001, opacity: 0)
+
         self.hide_edge_editor
     end
 
 
+    ##
+    # If the point (x,y) is inside the shape5 button, then return true, otherwise return false
+    #
+    # Args:
+    #   x: the x coordinate of the mouse click
+    #   y: the y coordinate of the mouse click
     def is_in_button_vertex(x,y)
         if self.shape5.contains? x,y then
             true
-        else 
-            false
-        end
-    end
-
-    def is_in_button_edge(x,y)
-        if self.shape7.contains? x,y then
-            true
-        else 
-            false
-        end
-    end
-
-    def is_in_textbox1(x,y)
-        if self.shape9.contains? x,y then
-            true 
         else
             false
         end
     end
 
+    ##
+    # If the shape7 object contains the x and y coordinates, then return true, otherwise return false
+    #
+    # Args:
+    #   x: the x coordinate of the mouse
+    #   y: the y coordinate of the mouse
+    def is_in_button_edge(x,y)
+        if self.shape7.contains? x,y then
+            true
+        else
+            false
+        end
+    end
+
+    ##
+    # If the shape9 object contains the x and y coordinates, then return true, otherwise return false
+    #
+    # Args:
+    #   x: the x coordinate of the mouse click
+    #   y: the y coordinate of the mouse click
+    def is_in_textbox1(x,y)
+        if self.shape9.contains? x,y then
+            true
+        else
+            false
+        end
+    end
+
+    ##
+    # It checks if the point is in the shape.
+    #
+    # Args:
+    #   x: the x coordinate of the point to test
+    #   y: the y coordinate of the point to check
     def is_in_shapeSquare(x,y)
-        if self.shapeSs.contains? x,y then 
+        if self.shapeSs.contains? x,y then
             true
-        else 
+        else
             false
         end
     end
 
+    ##
+    # It checks if the point is in the shape of a triangle.
+    #
+    # Args:
+    #   x: the x coordinate of the point to be tested
+    #   y: the y coordinate of the point
     def is_in_shapeTriangle(x,y)
-        if self.shapeTs.contains? x,y then 
+        if self.shapeTs.contains? x,y then
             true
-        else 
+        else
             false
         end
     end
 
+    ##
+    # It checks if the point is in the shape of a circle.
+    #
+    # Args:
+    #   x: the x coordinate of the point to be tested
+    #   y: the y coordinate of the point to test
     def is_in_shapeCircle(x,y)
-        if self.shapeCs.contains? x,y then 
+        if self.shapeCs.contains? x,y then
             true
-        else 
+        else
             false
         end
     end
 
+    ##
+    # It checks if the point is in the shape.
+    #
+    # Args:
+    #   x: the x coordinate of the point to be tested
+    #   y: the y coordinate of the point
     def is_in_shapePentagon(x,y)
-        if self.shapePs.contains? x,y then 
+        if self.shapePs.contains? x,y then
             true
-        else 
+        else
             false
         end
     end
 
+    ##
+    # It checks if the point is in the shape.
+    #
+    # Args:
+    #   x: the x coordinate of the point to be tested
+    #   y: the y coordinate of the point
     def is_in_shapeHexagon(x,y)
-        if self.shapeHs.contains? x,y then 
+        if self.shapeHs.contains? x,y then
             true
-        else 
+        else
             false
         end
     end
 
+    ##
+    # If the mouse is clicked on a color, then the colorShape variable is set to the name of the color
+    #
+    # Args:
+    #   x: the x coordinate of the mouse click
+    #   y: the y coordinate of the mouse click
     def is_in_colors(x,y)
         if @color_aqua.contains? x,y
             @colorShape = 'aqua'
@@ -611,50 +843,93 @@ class Editor
     end
 
 
+    ##
+    # If the mouse is over the button or the text, then return true, otherwise return false
+    #
+    # Args:
+    #   x: the x coordinate of the mouse
+    #   y: the y coordinate of the mouse
     def is_in_buttonCreate(x,y)
-        if @createshape.contains? x,y or @buttonC_text.contains? x,y then 
-            true 
+        if @createshape.contains? x,y or @buttonC_text.contains? x,y then
+            true
         else
-            false 
+            false
         end
     end
 
 
+    def is_in_button_conect(x,y)
+      if @createshape.contains? x,y or @txt_conect.contains? x,y then
+        true
+      else
+        false
+      end
+    end
+
+
+    ##
+    # This function helps us to know if the mouse is over the button to create a non directed edge
+    #
+    # Args:
+    #   x: The x coordinate of the mouse.
+    #   y: The y coordinate of the mouse.
     def is_in_buttonEdgeND(x,y)
-    #this help us to know if the mouse is over the  button to create a non directed edge 
+    #this help us to know if the mouse is over the  button to create a non directed edge
         if @shapeE3.contains? x,y then
             true
-        else  
+        else
             false
-        end        
+        end
     end
 
+    ##
+    # This function returns true if the mouse is over the button to create a directed edge, and false otherwise
+    #
+    # Args:
+    #   x: the x coordinate of the mouse
+    #   y: the y coordinate of the mouse
     def is_in_buttonEdgeD(x,y)
-        #this help us to know if the mouse is over the  button to create a directed edge 
+        #this help us to know if the mouse is over the  button to create a directed edge
         if @shapeE1.contains? x,y then
             true
-        else  
+        else
             false
-        end        
+        end
     end
 
 
+    ##
+    # If the point (x,y) is inside the rectangle @edge_boxE1, then return true, otherwise return false
+    #
+    # Args:
+    #   x: the x coordinate of the mouse
+    #   y: the y coordinate of the mouse
     def is_in_textboxE1(x,y)
-        if @edge_boxE1.contains? x,y then 
-            true 
+        if @edge_boxE1.contains? x,y then
+            true
         else
             false
         end
     end
 
+    ##
+    # If the point (x,y) is inside the edge box, then return true, otherwise return false
+    #
+    # Args:
+    #   x: the x coordinate of the mouse
+    #   y: the y coordinate of the mouse click
     def is_in_textboxE2(x,y)
-        if @edge_boxE2.contains? x,y then 
-            true 
+        if @edge_boxE2.contains? x,y then
+            true
         else
             false
         end
     end
 
+    ##
+    # The function press_button_vertex removes the shape6, changes the color of shape5 to #7CF7FF, sets the vertex_button
+    # to true, and if the edge_button is true, then it sets the edge_button to false, adds the shape8, and changes the
+    # color of shape7 to #99B899
     def press_button_vertex
         @shape6.remove
         @shape5.color = '#7CF7FF'
@@ -666,14 +941,20 @@ class Editor
         end
         self.hide_edge_editor
         self.show_vertex_Editor
-    end 
+    end
 
+   ##
+   # This function removes the vertex button from the screen and changes the color of the vertex button to green
     def unpress_button_vertex
         @shape6.remove
         @shape5.color = '#99B899'
         @vertex_button = false
     end
 
+    ##
+    # The function press_button_edge removes the shape8, changes the color of shape7 to #7CF7FF, sets the variable
+    # @edge_button to true, and if the variable @vertex_button is true, then it sets @vertex_button to false, adds shape6,
+    # and changes the color of shape5 to #99B899
     def press_button_edge
         @shape8.remove
         @shape7.color = '#7CF7FF'
@@ -685,108 +966,84 @@ class Editor
         end
         self.hide_vertex_Editor
         self.show_edge_editor
-    end 
+    end
 
+    ##
+    # The function unpress_button_edge is called when the user clicks on the edge button
     def unpress_button_edge
         @shape8.add
         @shape7.color = '#99B899'
-        @edge_button = false 
+        @edge_button = false
     end
 
-    def press_button_EdgeND 
+    ##
+    # It changes the color of a button and sets the type of edge to be created to non-directed
+    def press_button_EdgeND
         @shapeE4.remove
         @shapeE3.color = '#90E0EF'
         if @typeEdge != nil
             self.unpress_button_EdgeD
             @typeEdge = 1
-        else  
+        else
             @typeEdge = 1 # 1 is for a non directed edge
         end
-        if @typeEdge_shape != nil 
-            @typeEdge_shape.remove
-        end
-        if @typeEdge_shapeaux != nil
-            @typeEdge_shapeaux.remove
-            @typeEdge_shapeaux = nil
-        end
-        @typeEdge_shape = Line.new(
-            x1:1685 , y1: 167,
-            x2: 1730, y2: 167,
-            width: 5,
-            color: 'black',
-            z: 20
-          )
+        @typeEdge_shape.add
+
+
     end
 
 
-    def unpress_button_EdgeND 
-        @shapeE4.add 
-        @shapeE3.color =  '#56BBF1' 
-        if @typeEdge_shape != nil 
-            @typeEdge_shape.remove
-        end
-        @typeEdge_shape = nil
-        @typeEdge = nil
+    ##
+    # It adds a shape to the canvas, changes the color of another shape, and removes a third shape
+    def unpress_button_EdgeND
+        @shapeE4.add
+        @shapeE3.color =  '#56BBF1'
     end
 
 
-    def press_button_EdgeD 
+    ##
+    # It changes the color of a button and changes the type of edge to be created
+    def press_button_EdgeD
         @shapeE2.remove
         @shapeE1.color = '#90E0EF'
         if @typeEdge != nil
             self.unpress_button_EdgeND
             @typeEdge = 2
-        else  
+        else
             @typeEdge = 2 # 2 is for a directed edge
         end
-
-        if @typeEdge_shape != nil 
-            @typeEdge_shape.remove
-        end
-
-        @typeEdge_shape = Line.new(
-            x1:1685 , y1: 167,
-            x2: 1730, y2: 167,
-            width: 5,
-            color: 'black',
-            z: 20
-          )
-
-        @typeEdge_shapeaux = Circle.new(
-            x: 1725, y: 167,
-            radius: 10,
-            sectors: 3,
-            color: 'black',
-            z: 21
-        )
+        @typeEdge_shape.add
+        @typeEdge_shapeaux.add
     end
 
-    def unpress_button_EdgeD 
-        @shapeE2.add 
-        @shapeE1.color =  '#56BBF1' 
-        if @typeEdge_shape != nil 
-            @typeEdge_shape.remove
-        end
-        if @typeEdge_shapeaux != nil
-            @typeEdge_shapeaux.remove
-            @typeEdge_shapeaux = nil
-        end
-        @typeEdge_shape = nil
-        @typeEdge = nil
+    ##
+    # It removes the shape of the edge type from the canvas and sets the edge type to nil
+    def unpress_button_EdgeD
+        @shapeE2.add
+        @shapeE1.color =  '#56BBF1'
+        @typeEdge_shapeaux.remove
     end
 
+    ##
+    # This function is called when the user clicks on the vertex name text box
     def vertex_name_selected
         @name_box1 = true
     end
 
+    ##
+    # The function terminalV1_selected is called when the user selects the terminalV1 button
     def terminalV1_selected
         @txt_boxE1 = true
     end
 
+    ##
+    # It sets the variable @txt_boxE2 to true
     def terminalV2_selected
         @txt_boxE2 = true
     end
 
+    ##
+    # It changes the color of the buttons to yellow and creates a new shape in the editor
     def squre_shape_selected
         @shapeofvertex = 1
         self.shapeS.color = 'yellow'
@@ -801,6 +1058,8 @@ class Editor
         @shapeIneditor = make_Squre(1375,70,1000,125,self.colorShape)
     end
 
+    ##
+    # It changes the color of the buttons to indicate which shape is selected, and then draws a triangle in the editor
     def triangle_shape_selected
         @shapeofvertex = 2
         self.shapeS.color = 'white'
@@ -814,6 +1073,9 @@ class Editor
         @shapeIneditor = make_Circle(1435,140,1000,100,3,self.colorShape)
     end
 
+    ##
+    # It changes the color of the buttons to indicate which shape is selected, and then it creates a new shape in the
+    # editor
     def circle_shape_selected
         @shapeofvertex = 3
         self.shapeS.color = 'white'
@@ -827,6 +1089,8 @@ class Editor
         @shapeIneditor = make_Circle(1435,140,1000,80,35,self.colorShape)
     end
 
+    ##
+    # It changes the color of the shape buttons to white, except for the pentagon button, which is changed to yellow
     def pentagon_shape_selected
         @shapeofvertex = 4
         self.shapeS.color = 'white'
@@ -840,6 +1104,8 @@ class Editor
         @shapeIneditor = make_Circle(1435,140,1000,100,5,self.colorShape)
     end
 
+    ##
+    # It changes the shape of the vertex to a hexagon
     def hexagon_shape_selected
         @shapeofvertex = 5
         self.shapeS.color = 'white'
@@ -853,6 +1119,8 @@ class Editor
         @shapeIneditor = make_Circle(1435,140,1000,100,6,self.colorShape)
     end
 
+    ##
+    # It removes all the shapes and text that are used in the vertex editor
     def hide_vertex_Editor
         @shape9.remove
         @shape10.remove
@@ -889,10 +1157,13 @@ class Editor
         if @shapeIneditor != nil
             @shapeIneditor.remove
         end
-        @createshape.remove
+
+        #@createshape.remove
         @buttonC_text.remove
     end
 
+    ##
+    # It adds all the shapes and text to the screen
     def show_vertex_Editor
         @shape9.add
         @shape10.add
@@ -934,6 +1205,8 @@ class Editor
     end
 
 
+    ##
+    # It adds all the elements of the edge editor to the screen
     def show_edge_editor
         @shapeE1.add
         @shapeE2.add
@@ -962,21 +1235,24 @@ class Editor
         @color_teal.add
         @color_yellow.add
 
-        if @typeEdge_shape != nil then 
+        if @typeEdge_shape != nil then
             @typeEdge_shape.add
         end
 
-        if @typeEdge_shapeaux != nil then 
-            @typeEdge_shape.add
+        if @typeEdge_shapeaux != nil then
+            @typeEdge_shapeaux.add
         end
+        @txt_conect.add
     end
 
+    ##
+    # It removes all the elements of the edge editor
     def hide_edge_editor
         @shapeE1.remove
         @shapeE2.remove
         @shapeE3.remove
         @shapeE4.remove
-        @textE1.remove 
+        @textE1.remove
         @textE2.remove
         @edge_boxE1.remove
         @edge_boxE2.remove
@@ -999,16 +1275,19 @@ class Editor
         @color_teal.remove
         @color_yellow.remove
 
-        if @typeEdge_shape != nil then 
+        if @typeEdge_shape != nil then
             @typeEdge_shape.remove
         end
 
-        if @typeEdge_shapeaux != nil then 
-            @typeEdge_shape.remove
+        if @typeEdge_shapeaux != nil then
+            @typeEdge_shapeaux.remove
         end
+        @txt_conect.remove
     end
 
 
+    ##
+    # This function resets the vertex editor
     def reset_vertexEditor
         self.shapeofvertex = 0
         self.colorShape = 'random'
@@ -1036,7 +1315,7 @@ po = Square.new(
     z: 100
 )
 
-g = Graph_ND.new
+g = Graph.new
 
 
 
@@ -1044,15 +1323,15 @@ on :mouse do |event|
     #puts event
     case event.button
     when :left#right button  is used to select any object on the screen
-        if edit.is_in_button_vertex(event.x, event.y)  then 
+        if edit.is_in_button_vertex(event.x, event.y)  then
             edit.press_button_vertex
         end
 
-        if edit.is_in_button_edge(event.x, event.y) then 
+        if edit.is_in_button_edge(event.x, event.y) then
             edit.press_button_edge
         end
 
-        if edit.is_in_textbox1(event.x,event.y)  and edit.vertex_button == true then 
+        if edit.is_in_textbox1(event.x,event.y)  and edit.vertex_button == true then
             edit.vertex_name_selected
         end
 
@@ -1083,7 +1362,7 @@ on :mouse do |event|
         if edit.is_in_buttonCreate(event.x,event.y) and edit.vertex_button == true
             s = ''
             case edit.shapeofvertex
-            when 1 
+            when 1
                 s = 'square'
             when 2
                 s = 'triangle'
@@ -1096,22 +1375,30 @@ on :mouse do |event|
             else
                 s = 'circle'
             end
-            if edit.shapeIneditor != nil  then 
+            if edit.shapeIneditor != nil  then
                 if edit.textInshape.text.length > 0
                     x = g.add_vertex((edit.textInshape.text),s,edit.colorShape)
-                elsif edit.text_box1.text.length > 0 
+                elsif edit.text_box1.text.length > 0
                     x = g.add_vertex((edit.text_box1.text),s,edit.colorShape)
-                else 
-                    
-                    x = g.add_vertex('NULL0',s,edit.colorShape)
-                
+                else
+
+                    #x = g.add_vertex('NULL0',s,edit.colorShape)
+
                 end
-                
+
                 if  x != nil
                     edit.reset_vertexEditor
                 end
             end
-            
+
+        end
+
+
+        if edit.is_in_buttonCreate(event.x,event.y) and edit.edge_button == true
+
+            if edit.text_boxE1.text != 'null' && edit.text_boxE2.text != 'null' && edit.typeEdge == 1
+              g.connect_vertex(g.vertex[edit.text_boxE1.text],g.vertex[edit.text_boxE2.text],'black')
+            end
         end
 
         if edit.is_in_buttonEdgeND(event.x,event.y) and edit.edge_button == true
@@ -1136,7 +1423,7 @@ on :mouse do |event|
             edit.terminalV2_selected
         end
 
-        if edit.txt_boxE1 or edit.txt_boxE2 then 
+        if edit.txt_boxE1 or edit.txt_boxE2 then
             g.vertex.each do |k,s|
                 if s.vshape.contains? event.x ,event.y
                      if edit.txt_boxE1
@@ -1146,9 +1433,9 @@ on :mouse do |event|
                      if edit.txt_boxE2
                         edit.text_boxE2.text = k.to_s
                     end
-                end 
+                end
             end
-        else 
+        else
             g.vertex.each do |k,s|
                 if s.vshape.contains? event.x ,event.y
                     if g.selected_key == k
@@ -1160,7 +1447,7 @@ on :mouse do |event|
             end
         end
 
-        
+
     when :middle
     # Middle mouse button pressed down
     when :right
@@ -1189,25 +1476,31 @@ on :mouse_move do |event|
     else
         edit.buttonC_text.color = 'black'
     end
+
+    if edit.is_in_button_conect(event.x,event.y)
+        edit.txt_conect.color = 'blue'
+    else
+        edit.txt_conect.color = 'black'
+    end
 end
 
 #this help us to introduce text with the keyboard
 on :key_down do |event|
     if event.key != 'backspace' and event.key != 'space' and event.key != 'return'
-        x = event.key 
-        if edit.name_box1 and edit.vertex_button then 
+        x = event.key
+        if edit.name_box1 and edit.vertex_button then
             if edit.text_box1.text.length <= 20 then
                 edit.text_box1.text += x.to_s
             end
         end
 
-        if edit.txt_boxE1 and edit.edge_button then 
+        if edit.txt_boxE1 and edit.edge_button then
             if edit.text_boxE1.text.length <= 20 then
                 edit.text_boxE1.text += x.to_s
             end
         end
 
-        if edit.txt_boxE2 and edit.edge_button then 
+        if edit.txt_boxE2 and edit.edge_button then
             if edit.text_boxE2.text.length <= 20 then
                 edit.text_boxE2.text += x.to_s
             end
@@ -1225,29 +1518,29 @@ on :key_down do |event|
             edit.text_boxE2.text = edit.text_boxE2.text.chop
         end
     elsif event.key == 'space' and event.key != 'backspace'and event.key != 'return'
-        if edit.name_box1 then 
+        if edit.name_box1 then
             if edit.text_box1.text.length <= 15 then
                 edit.text_box1.text += '_'
             end
         end
 
-        if edit.txt_boxE1 then 
+        if edit.txt_boxE1 then
             if edit.text_boxE1.text.length <= 15 then
                 edit.text_boxE1.text += '_'
             end
         end
 
-        if edit.txt_boxE2 then 
+        if edit.txt_boxE2 then
             if edit.text_boxE2.text.length <= 15 then
                 edit.text_boxE2.text += '_'
             end
         end
     elsif event.key == 'return' and event.key != 'space' and event.key != 'backspace'
         if edit.name_box1 and edit.vertex_button then
-            if edit.text_box1.text.length > 0 then 
+            if edit.text_box1.text.length > 0 then
                 edit.textInshape.add
                 edit.textInshape.text = edit.text_box1.text
-            else 
+            else
                 edit.textInshape.text = 'NULL'
             end
         end
