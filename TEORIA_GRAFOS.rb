@@ -322,9 +322,34 @@ class Graph
     def connect_vertex(v1, v2,color)
       if not (v1 == v2)
         ed = Edge_ND.new(v1,v2,'Edge',color,10)
+        @edges[ed.object_id] = ed
       else
         ed = Edge_ND.new(v1,v2,'Edge',color,10)
+        @edges[ed.object_id] = ed
       end
+
+
+
+    end
+
+
+    def cleargraph
+        if @edges.size() > 0 then
+            @edges.each do |key,value|
+                value.shape.remove
+            end
+        end
+
+       if @vertex.size() > 0
+        @vertex.each do |key,value|
+            value.vshape.remove
+            value.nameshape.remove
+        end
+       end
+
+        @edges = Hash.new
+        @vertex = Hash.new
+
     end
 end
 
@@ -1160,6 +1185,7 @@ class Editor
 
         #@createshape.remove
         @buttonC_text.remove
+        @name_box1 = false
     end
 
     ##
@@ -1283,6 +1309,9 @@ class Editor
             @typeEdge_shapeaux.remove
         end
         @txt_conect.remove
+
+        @txt_boxE1 = false
+        @txt_boxE2 = false
     end
 
 
@@ -1397,7 +1426,11 @@ on :mouse do |event|
         if edit.is_in_buttonCreate(event.x,event.y) and edit.edge_button == true
 
             if edit.text_boxE1.text != 'null' && edit.text_boxE2.text != 'null' && edit.typeEdge == 1
-              g.connect_vertex(g.vertex[edit.text_boxE1.text],g.vertex[edit.text_boxE2.text],'black')
+
+                if g.vertex[edit.text_boxE1.text] != nil && g.vertex[edit.text_boxE2.text] != nil
+                    g.connect_vertex(g.vertex[edit.text_boxE1.text],g.vertex[edit.text_boxE2.text],'black')
+                end
+
             end
         end
 
@@ -1452,6 +1485,16 @@ on :mouse do |event|
     # Middle mouse button pressed down
     when :right
         if g.selected_key != nil
+            g.edges.each do |key,var|
+                if var.terminalV1 ==  g.vertex[g.selected_key] then
+                    var.shape.x1 = event.x
+                    var.shape.y1 = event.y
+                end
+                if var.terminalV2 ==  g.vertex[g.selected_key] then
+                    var.shape.x2 = event.x
+                    var.shape.y2 = event.y
+                end
+            end
             g.vertex[g.selected_key].vshape.x = event.x
             g.vertex[g.selected_key].vshape.y = event.y
             g.vertex[g.selected_key].nameshape.x = event.x
@@ -1466,6 +1509,16 @@ end
 on :mouse_move do |event|
 
     if g.selected_key != nil
+        g.edges.each do |key,var|
+            if var.terminalV1 ==  g.vertex[g.selected_key] then
+                var.shape.x1 = event.x
+                var.shape.y1 = event.y
+            end
+            if var.terminalV2 ==  g.vertex[g.selected_key] then
+                var.shape.x2 = event.x
+                var.shape.y2 = event.y
+            end
+        end
         g.vertex[g.selected_key].vshape.x = event.x
         g.vertex[g.selected_key].vshape.y = event.y
         g.vertex[g.selected_key].nameshape.x = event.x
@@ -1486,7 +1539,7 @@ end
 
 #this help us to introduce text with the keyboard
 on :key_down do |event|
-    if event.key != 'backspace' and event.key != 'space' and event.key != 'return'
+    if event.key != 'backspace' && event.key != 'space' && event.key != 'return' && event.key != 'delete'
         x = event.key
         if edit.name_box1 and edit.vertex_button then
             if edit.text_box1.text.length <= 20 then
@@ -1505,7 +1558,7 @@ on :key_down do |event|
                 edit.text_boxE2.text += x.to_s
             end
         end
-    elsif event.key == 'backspace' and event.key != 'space' and event.key != 'return'
+    elsif event.key == 'backspace' and event.key != 'space' and event.key != 'return' && event.key != 'delete'
         if edit.name_box1 and edit.vertex_button then
             edit.text_box1.text = edit.text_box1.text.chop
         end
@@ -1517,7 +1570,7 @@ on :key_down do |event|
         if edit.txt_boxE2 and edit.edge_button then
             edit.text_boxE2.text = edit.text_boxE2.text.chop
         end
-    elsif event.key == 'space' and event.key != 'backspace'and event.key != 'return'
+    elsif event.key == 'space' and event.key != 'backspace'and event.key != 'return' && event.key != 'delete'
         if edit.name_box1 then
             if edit.text_box1.text.length <= 15 then
                 edit.text_box1.text += '_'
@@ -1535,7 +1588,7 @@ on :key_down do |event|
                 edit.text_boxE2.text += '_'
             end
         end
-    elsif event.key == 'return' and event.key != 'space' and event.key != 'backspace'
+    elsif event.key == 'return' and event.key != 'space' and event.key != 'backspace'&& event.key != 'delete'
         if edit.name_box1 and edit.vertex_button then
             if edit.text_box1.text.length > 0 then
                 edit.textInshape.add
@@ -1544,8 +1597,11 @@ on :key_down do |event|
                 edit.textInshape.text = 'NULL'
             end
         end
+    elsif event.key == 'delete' && event.key != 'return' and event.key != 'space' and event.key != 'backspace'
+        g.cleargraph
     end
 end
+
 
 
 show
